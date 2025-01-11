@@ -4,9 +4,16 @@
 	import { restoreAuth } from '$lib/stores/auth.js';
 
 	if (typeof window !== 'undefined') {
-		restoreAuth().catch(err => {
+		restoreAuth().catch((err) => {
 			console.error('Error during auth restoration:', err.message);
 		});
+	}
+
+	export async function load() {
+		if (browser) {
+			await restoreAuth();
+		}
+		return {};
 	}
 </script>
 

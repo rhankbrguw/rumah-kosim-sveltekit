@@ -39,6 +39,7 @@
 		"dotenv": "^16.4.7",
 		"express": "^4.21.2",
 		"jsonwebtoken": "^9.0.2",
+		"lucide-svelte": "^0.471.0",
 		"mysql2": "^3.11.5"
 	}
 }
