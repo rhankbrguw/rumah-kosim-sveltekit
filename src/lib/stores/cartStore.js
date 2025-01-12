@@ -1,4 +1,3 @@
-// src/lib/stores/cartStore.js
 import { writable } from 'svelte/store';
 import axios from 'axios';
 

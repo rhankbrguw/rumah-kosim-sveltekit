@@ -1,4 +1,3 @@
-// api/checkout/payment/+server.js
 import { json } from '@sveltejs/kit';
 import mysql from 'mysql2/promise';
 import jwt from 'jsonwebtoken';
@@ -68,18 +67,12 @@ export async function POST({ request }) {
 
 			const orderId = orderResult.insertId;
 
-			// Insert order items and update product quantities
+			// Insert order items without updating product quantities
 			for (const item of cartItems) {
 				await connection.execute(
 					'INSERT INTO order_items (order_id, product_id, quantity, price_at_time) VALUES (?, ?, ?, ?)',
 					[orderId, item.product_id, item.quantity, item.price]
 				);
-
-				// Update product quantity
-				await connection.execute('UPDATE products SET quantity = quantity - ? WHERE id = ?', [
-					item.quantity,
-					item.product_id
-				]);
 			}
 
 			// Clear the user's cart

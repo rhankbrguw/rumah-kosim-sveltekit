@@ -27,6 +27,15 @@
 		quantity: 0
 	};
 
+	function formatIDR(number) {
+		return new Intl.NumberFormat('id-ID', {
+			style: 'currency',
+			currency: 'IDR',
+			minimumFractionDigits: 0,
+			maximumFractionDigits: 0
+		}).format(number);
+	}
+
 	async function checkAdminAccess() {
 		if (!browser) return false;
 		const token = localStorage.getItem('authToken');
@@ -260,88 +269,116 @@
 	});
 </script>
 
-<div class="min-h-screen bg-gray-100">
-	<div class="container mx-auto px-4 py-8">
-		<div class="mb-8 flex items-center justify-between">
-			<h1 class="mt-20 text-3xl font-bold">Kosim<span class="text-amber-400">Book</span> Admin</h1>
+<div class="min-h-screen bg-[#F8F9FA]">
+	<div class="container mx-auto px-8 py-8">
+		<!-- Logo header -->
+		<div class="mb-8 mt-20">
+			<h1 class="mt-8 text-2xl font-bold">Kosim<span class="text-[#FF5C00]">Book</span> Admin</h1>
 		</div>
 
-		<div class="mb-6 flex space-x-4">
+		<!-- Tab buttons with updated styling -->
+		<div class="mb-6 flex gap-2">
 			<button
-				class="rounded-lg px-6 py-3 font-medium transition-colors {activeTab === 'products'
-					? 'bg-orange-500 text-white'
+				class="rounded-[4px] px-4 py-2 font-medium transition-colors {activeTab === 'products'
+					? 'bg-[#FF5C00] text-white'
 					: 'bg-white text-gray-800'}"
 				on:click={() => {
 					activeTab = 'products';
 					loadData();
 				}}
 			>
-				Products
+				Product List
 			</button>
 			<button
-				class="rounded-lg px-6 py-3 font-medium transition-colors {activeTab === 'orders'
-					? 'bg-orange-500 text-white'
+				class="rounded-[4px] px-4 py-2 font-medium transition-colors {activeTab === 'orders'
+					? 'bg-[#FF5C00] text-white'
 					: 'bg-white text-gray-800'}"
 				on:click={() => {
 					activeTab = 'orders';
 					loadData();
 				}}
 			>
-				Orders
+				Order List
 			</button>
 		</div>
 
+		<!-- Products Table Section -->
 		{#if activeTab === 'products'}
-			<div>
+			<div class="rounded-lg bg-white p-4 shadow-sm">
 				<div class="mb-6 flex items-center justify-between">
 					<input
 						type="text"
-						class="w-full rounded border px-4 py-2"
+						class="w-64 rounded-[4px] border border-gray-200 px-4 py-2"
 						placeholder="Search products..."
 						bind:value={searchTerm}
 					/>
 					<button
-						class="ml-4 rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600"
+						class="flex items-center gap-2 rounded-[4px] bg-[#FF5C00] px-4 py-2 text-white hover:bg-[#FF5C00]/90"
 						on:click={() => (showAddModal = true)}
 					>
-						<Plus size="24" class="inline-block" />
-						/> Add Product
+						<Plus size="18" />
+						Add Product
 					</button>
 				</div>
-				<table class="w-full border-collapse">
+
+				<!-- Updated Products Table -->
+				<table class="w-full">
 					<thead>
-						<tr class="bg-gray-200">
-							<th class="border px-4 py-2">Title</th>
-							<th class="border px-4 py-2">Price</th>
-							<th class="border px-4 py-2">Quantity</th>
-							<th class="border px-4 py-2">Actions</th>
+						<tr class="border-b text-left">
+							<th class="pb-4 font-medium text-gray-600">Title</th>
+							<th class="pb-4 font-medium text-gray-600">Price</th>
+							<th class="pb-4 font-medium text-gray-600">Stock</th>
+							<th class="pb-4 font-medium text-gray-600">Picture</th>
+							<th class="pb-4 font-medium text-gray-600">Action</th>
 						</tr>
 					</thead>
 					<tbody>
 						{#each products.filter((product) => product.title
 								.toLowerCase()
 								.includes(searchTerm.toLowerCase())) as product}
-							<tr>
-								<td class="border px-4 py-2">{product.title}</td>
-								<td class="border px-4 py-2">${product.price}</td>
-								<td class="border px-4 py-2">{product.quantity}</td>
-								<td class="border px-4 py-2">
-									<button
-										class="mr-2 rounded bg-blue-500 px-2 py-1 text-white hover:bg-blue-600"
-										on:click={() => {
-											showEditModal = true;
-											editingProduct = product;
-										}}
-									>
-										<Pencil size="16" class="inline-block" />
-									</button>
-
-									<button
-										class="rounded bg-red-500 px-2 py-1 text-white hover:bg-red-600"
-										on:click={() => handleDeleteProduct(product.id)}
-									>
-										<Trash2 class="inline-block" />
-									</button>
+							<tr class="border-b">
+								<td class="py-4">{product.title}</td>
+								<td class="py-4">{formatIDR(product.price)}</td>
+								<td class="py-4">{product.quantity}</td>
+								<td class="py-4">
+									<div class="flex items-center gap-2">
+										<img
+											src={product.image}
+											alt={product.title}
+											class="h-10 w-10 rounded-sm object-cover"
+										/>
+										<label
+											class="cursor-pointer rounded-[4px] bg-gray-100 px-3 py-1 text-sm hover:bg-gray-200"
+										>
+											<input
+												type="file"
+												class="hidden"
+												on:change={(e) => handleFileSelect(e, product.id)}
+												accept="image/*"
+											/>
+											Upload Image
+										</label>
+									</div>
+								</td>
+								<td class="py-4">
+									<div class="flex gap-2">
+										<button
+											class="rounded-[4px] bg-blue-500 p-1.5 text-white hover:bg-blue-600"
+											on:click={() => {
+												showEditModal = true;
+												editingProduct = product;
+												stockEdit.quantity = product.quantity;
+											}}
+										>
+											<Pencil size="16" />
+										</button>
+										<button
+											class="rounded-[4px] bg-red-500 p-1.5 text-white hover:bg-red-600"
+											on:click={() => handleDeleteProduct(product.id)}
+										>
+											<Trash2 size="16" />
+										</button>
+									</div>
 								</td>
 							</tr>
 						{/each}
@@ -349,29 +386,40 @@
 				</table>
 			</div>
 		{:else if activeTab === 'orders'}
-			<div>
-				<table class="w-full border-collapse">
+			<!-- Orders Table Section -->
+			<div class="rounded-lg bg-white p-4 shadow-sm">
+				<table class="w-full">
 					<thead>
-						<tr class="bg-gray-200">
-							<th class="border px-4 py-2">Order ID</th>
-							<th class="border px-4 py-2">Total</th>
-							<th class="border px-4 py-2">Status</th>
-							<th class="border px-4 py-2">Actions</th>
+						<tr class="border-b text-left">
+							<th class="pb-4 font-medium text-gray-600">Order ID</th>
+							<th class="pb-4 font-medium text-gray-600">Title</th>
+							<th class="pb-4 font-medium text-gray-600">Username</th>
+							<th class="pb-4 font-medium text-gray-600">Qty</th>
+							<th class="pb-4 font-medium text-gray-600">Price/pcs</th>
+							<th class="pb-4 font-medium text-gray-600">Total</th>
+							<th class="pb-4 font-medium text-gray-600">Status</th>
+							<th class="pb-4 font-medium text-gray-600">Action</th>
 						</tr>
 					</thead>
 					<tbody>
 						{#each orders as order}
-							<tr>
-								<td class="border px-4 py-2">{order.id}</td>
-								<td class="border px-4 py-2">${order.total}</td>
-								<td class="border px-4 py-2">
-									<span class="rounded px-2 py-1 text-white {getStatusColor(order.status)}">
+							<tr class="border-b">
+								<td class="py-4">#{order.id}</td>
+								<td class="py-4">{order.title}</td>
+								<td class="py-4">{order.username}</td>
+								<td class="py-4">{order.quantity}</td>
+								<td class="py-4">{formatIDR(order.price_at_time)}</td>
+								<td class="py-4">{formatIDR(order.total)}</td>
+								<td class="py-4">
+									<span
+										class="rounded-full px-3 py-1 text-sm text-white {getStatusColor(order.status)}"
+									>
 										{order.status}
 									</span>
 								</td>
-								<td class="border px-4 py-2">
+								<td class="py-4">
 									<select
-										class="rounded border px-2 py-1"
+										class="rounded-[4px] border border-gray-200 px-3 py-1.5 text-sm"
 										bind:value={order.status}
 										on:change={(e) => updateOrderStatus(order.id, e.target.value)}
 									>
@@ -387,58 +435,154 @@
 			</div>
 		{/if}
 
-		<!-- Add Modal -->
+		<!-- Modal -->
+		<!-- Add Product -->
 		{#if showAddModal}
-			<div class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-75">
-				<div class="w-1/3 rounded-lg bg-white p-6">
-					<h2 class="mb-4 text-xl font-bold">Add Product</h2>
-					<input
-						type="text"
-						class="mb-3 w-full rounded border p-2"
-						placeholder="Title"
-						bind:value={newProduct.title}
-					/>
-					<input
-						type="text"
-						class="mb-3 w-full rounded border p-2"
-						placeholder="Description"
-						bind:value={newProduct.description}
-					/>
-					<input
-						type="number"
-						class="mb-3 w-full rounded border p-2"
-						placeholder="Price"
-						bind:value={newProduct.price}
-					/>
-					<input
-						type="number"
-						class="mb-3 w-full rounded border p-2"
-						placeholder="Quantity"
-						bind:value={newProduct.quantity}
-					/>
-					<input
-						type="file"
-						class="mb-3 w-full rounded border p-2"
-						on:change={(e) => handleFileSelect(e, null)}
-					/>
-					<div class="flex justify-end">
+			<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 pb-6 pt-24">
+				<div class="w-[400px] rounded-lg bg-white p-5">
+					<div class="mb-4 flex items-center justify-between">
+						<h2 class="text-lg font-semibold text-gray-800">Add Product</h2>
 						<button
-							class="mr-3 rounded bg-gray-500 px-4 py-2 text-white"
-							on:click={() => (showAddModal = false)}>Cancel</button
+							class="text-gray-500 hover:text-gray-700"
+							on:click={() => (showAddModal = false)}
 						>
-						<button class="rounded bg-green-500 px-4 py-2 text-white" on:click={handleAddProduct}
-							>Add</button
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								class="h-6 w-6"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M6 18L18 6M6 6l12 12"
+								/>
+							</svg>
+						</button>
+					</div>
+
+					<div class="space-y-3">
+						<!-- Title -->
+						<div>
+							<label class="mb-1.5 block text-sm font-medium text-gray-700">Title</label>
+							<input
+								type="text"
+								class="w-full rounded-[4px] border border-gray-200 px-3 py-2 focus:border-[#FF5C00] focus:outline-none focus:ring-1 focus:ring-[#FF5C00]"
+								placeholder="Enter product title"
+								bind:value={newProduct.title}
+							/>
+						</div>
+
+						<!-- Description -->
+						<div>
+							<label class="mb-1.5 block text-sm font-medium text-gray-700">Description</label>
+							<textarea
+								class="w-full rounded-[4px] border border-gray-200 px-4 py-2.5 focus:border-[#FF5C00] focus:outline-none focus:ring-1 focus:ring-[#FF5C00]"
+								placeholder="Enter product description"
+								rows="2"
+								bind:value={newProduct.description}
+							></textarea>
+						</div>
+
+						<!-- Price & Quantity Row -->
+						<div class="grid grid-cols-2 gap-4">
+							<div>
+								<label class="mb-1.5 block text-sm font-medium text-gray-700">Price</label>
+								<input
+									type="number"
+									class="w-full rounded-[4px] border border-gray-200 px-4 py-2.5 focus:border-[#FF5C00] focus:outline-none focus:ring-1 focus:ring-[#FF5C00]"
+									placeholder="0.00"
+									bind:value={newProduct.price}
+								/>
+							</div>
+							<div>
+								<label class="mb-1.5 block text-sm font-medium text-gray-700">Quantity</label>
+								<input
+									type="number"
+									class="w-full rounded-[4px] border border-gray-200 px-4 py-2.5 focus:border-[#FF5C00] focus:outline-none focus:ring-1 focus:ring-[#FF5C00]"
+									placeholder="0"
+									bind:value={newProduct.quantity}
+								/>
+							</div>
+						</div>
+
+						<!-- Image Upload -->
+						<div>
+							<label class="mb-1.5 block text-sm font-medium text-gray-700">Product Image</label>
+							<div class="relative">
+								<input
+									type="file"
+									class="hidden"
+									id="productImage"
+									on:change={(e) => handleFileSelect(e, null)}
+									accept="image/*"
+								/>
+								<label
+									for="productImage"
+									class="flex cursor-pointer items-center gap-2 rounded-[4px] border border-gray-200 px-4 py-2.5 text-gray-500 hover:bg-gray-50"
+								>
+									<Upload size={18} />
+									<span>Upload image</span>
+								</label>
+								{#if newProduct.image}
+									<p class="mt-2 text-sm text-green-600">Image uploaded successfully</p>
+								{/if}
+							</div>
+						</div>
+					</div>
+
+					<!-- Action Buttons -->
+					<div class="mt-5 flex justify-end gap-3">
+						<button
+							class="rounded-[4px] border border-gray-200 px-6 py-2 text-gray-700 hover:bg-gray-50"
+							on:click={() => (showAddModal = false)}
 						>
+							Cancel
+						</button>
+						<button
+							class="rounded-[4px] bg-[#FF5C00] px-6 py-2 text-white hover:bg-[#FF5C00]/90"
+							on:click={handleAddProduct}
+						>
+							Add Product
+						</button>
 					</div>
 				</div>
 			</div>
 		{/if}
 
-		<!-- Edit Modal -->
+		<!-- Edit Stock -->
 		{#if showEditModal}
-			<div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-				<div class="w-full max-w-md rounded-lg bg-white p-6">
-					<h2 class="mb-4 text-xl font-bold">Update Stock</h2>
+			<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+				<div class="w-[400px] rounded-lg bg-white p-6">
+					<div class="mb-6 flex items-center justify-between">
+						<h2 class="text-xl font-semibold text-gray-800">Update Stock</h2>
+						<button
+							class="text-gray-500 hover:text-gray-700"
+							on:click={() => {
+								showEditModal = false;
+								editingProduct = null;
+								stockEdit.quantity = 0;
+							}}
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								class="h-6 w-6"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M6 18L18 6M6 6l12 12"
+								/>
+							</svg>
+						</button>
+					</div>
+
 					<form
 						on:submit|preventDefault={() => {
 							handleUpdateStock(editingProduct.id, stockEdit.quantity);
@@ -446,22 +590,25 @@
 						}}
 						class="space-y-4"
 					>
+						<!-- Current Stock -->
 						<div>
-							<label class="mb-1 block text-sm font-medium"
-								>Current Stock: {editingProduct?.quantity}</label
-							>
+							<label class="mb-1.5 block text-sm font-medium text-gray-700">Current Stock</label>
+							<p class="mb-4 text-sm text-gray-500">Current quantity: {editingProduct?.quantity}</p>
 							<input
 								type="number"
 								bind:value={stockEdit.quantity}
-								class="w-full rounded border p-2"
+								class="w-full rounded-[4px] border border-gray-200 px-4 py-2.5 focus:border-[#FF5C00] focus:outline-none focus:ring-1 focus:ring-[#FF5C00]"
 								min="0"
+								placeholder="Enter new quantity"
 								required
 							/>
 						</div>
-						<div class="flex justify-end space-x-3">
+
+						<!-- Action Buttons -->
+						<div class="mt-6 flex justify-end gap-3">
 							<button
 								type="button"
-								class="rounded bg-gray-200 px-4 py-2 hover:bg-gray-300"
+								class="rounded-[4px] border border-gray-200 px-6 py-2 text-gray-700 hover:bg-gray-50"
 								on:click={() => {
 									showEditModal = false;
 									editingProduct = null;
@@ -472,7 +619,7 @@
 							</button>
 							<button
 								type="submit"
-								class="rounded bg-orange-500 px-4 py-2 text-white hover:bg-orange-600"
+								class="rounded-[4px] bg-[#FF5C00] px-6 py-2 text-white hover:bg-[#FF5C00]/90"
 							>
 								Update Stock
 							</button>
