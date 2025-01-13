@@ -78,7 +78,14 @@
 					<span class="text-stone-500 hover:text-amber-400">{user?.username}</span>
 				</div>
 				<div class="absolute right-0 hidden w-48 rounded bg-white shadow-md group-hover:block">
-					{#if user?.role !== 'admin'}
+					{#if user?.role === 'admin'}
+						<a
+							href="/admin"
+							class="block px-4 py-2 text-sm text-stone-500 hover:bg-amber-50 hover:text-amber-400"
+						>
+							⚙️Settings
+						</a>
+					{:else}
 						<a
 							href="/client/profiles"
 							class="block px-4 py-2 text-sm text-stone-500 hover:bg-amber-50 hover:text-amber-400"

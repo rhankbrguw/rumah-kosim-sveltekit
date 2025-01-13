@@ -16,7 +16,7 @@
         localStorage.setItem('authToken', token);
 
         alert('Login successful!');
-        user.role === 'admin' ? goto('/admin') : goto('/');
+        user.role === 'admin' ? goto('/') : goto('/');
 
       } else {
         alert(response.data.error || 'Login failed');
