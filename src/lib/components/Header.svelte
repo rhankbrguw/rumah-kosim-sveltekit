@@ -67,7 +67,7 @@
 	</div>
 
 	<div class="flex items-center gap-4">
-		{#if isAuthenticated}
+		{#if isAuthenticated && user?.role !== 'admin'}
 			<a href="/client/cart" class="text-stone-300 hover:text-amber-400">🛒 {cartCount}</a>
 		{/if}
 
@@ -78,12 +78,14 @@
 					<span class="text-stone-500 hover:text-amber-400">{user?.username}</span>
 				</div>
 				<div class="absolute right-0 hidden w-48 rounded bg-white shadow-md group-hover:block">
-					<a
-						href="/client/profiles"
-						class="block px-4 py-2 text-sm text-stone-500 hover:bg-amber-50 hover:text-amber-400"
-					>
-						View Profiles
-					</a>
+					{#if user?.role !== 'admin'}
+						<a
+							href="/client/profiles"
+							class="block px-4 py-2 text-sm text-stone-500 hover:bg-amber-50 hover:text-amber-400"
+						>
+							View Profiles
+						</a>
+					{/if}
 					<a
 						on:click={handleLogout}
 						class="block cursor-pointer px-4 py-2 text-sm text-red-500 hover:bg-amber-50 hover:text-red-700"

@@ -1,12 +1,19 @@
 <script>
 	import { onDestroy } from 'svelte';
 	import { cartCount, safeCartCount, updateCartCount, cartItems } from '$lib/stores/cart';
+	import { auth } from '$lib/stores/auth';
 	import axios from 'axios';
 
 	export let product;
 	export let quantity = 1;
 
 	let isAddingToCart = false;
+	let user;
+
+	// Subscribe to auth store to get user role
+	auth.subscribe(({ user: userDetails }) => {
+		user = userDetails;
+	});
 
 	function formatRupiah(price) {
 		return new Intl.NumberFormat('id-ID', {
@@ -28,10 +35,11 @@
 	}
 
 	$: isOutOfStock = product?.quantity === 0;
+	$: isAdmin = user?.role === 'admin';
 
 	const handleAddToCart = async () => {
-		if (isAddingToCart) return;
-		
+		if (isAddingToCart || isAdmin) return;
+
 		try {
 			isAddingToCart = true;
 			const token = localStorage.getItem('authToken');
@@ -47,7 +55,7 @@
 				}
 			});
 
-			const existingItem = currentCart.data.find(item => item.product_id === product.id);
+			const existingItem = currentCart.data.find((item) => item.product_id === product.id);
 			const totalQuantity = (existingItem?.quantity || 0) + quantity;
 
 			if (totalQuantity > product.quantity) {
@@ -78,15 +86,15 @@
 
 				// Calculate total items in cart
 				const newCount = updatedCart.data.reduce((total, item) => total + Number(item.quantity), 0);
-				
+
 				// Update stores
 				cartCount.set(newCount);
 				cartItems.set(updatedCart.data);
 				localStorage.setItem('cartCount', newCount.toString());
-				
+
 				// Update product quantity display
 				product.quantity -= quantity;
-				
+
 				alert('Product added to cart successfully!');
 			} else {
 				alert(response.data?.error || 'Failed to add product to cart');
@@ -143,41 +151,43 @@
 				{/if}
 			</div>
 
-			<ul class="mt-6 space-y-2 text-gray-600">
-				<li>
-					<strong>Note:</strong> You must agree to our Terms & Conditions before making any purchase.
-				</li>
-			</ul>
+			{#if !isAdmin}
+				<ul class="mt-6 space-y-2 text-gray-600">
+					<li>
+						<strong>Note:</strong> You must agree to our Terms & Conditions before making any purchase.
+					</li>
+				</ul>
 
-			<!-- Quantity Selector -->
-			<div class="mt-6 flex items-center gap-4">
-				<button
-					on:click={decrement}
-					class="flex h-8 w-8 items-center justify-center rounded border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 disabled:cursor-not-allowed"
-					disabled={quantity === 1 || isAddingToCart}
-				>
-					-
-				</button>
-				<span class="text-lg font-medium">{quantity}</span>
-				<button
-					on:click={increment}
-					class="flex h-8 w-8 items-center justify-center rounded border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 disabled:cursor-not-allowed"
-					disabled={quantity >= product.quantity || isAddingToCart}
-				>
-					+
-				</button>
-			</div>
+				<!-- Quantity Selector -->
+				<div class="mt-6 flex items-center gap-4">
+					<button
+						on:click={decrement}
+						class="flex h-8 w-8 items-center justify-center rounded border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 disabled:cursor-not-allowed"
+						disabled={quantity === 1 || isAddingToCart}
+					>
+						-
+					</button>
+					<span class="text-lg font-medium">{quantity}</span>
+					<button
+						on:click={increment}
+						class="flex h-8 w-8 items-center justify-center rounded border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 disabled:cursor-not-allowed"
+						disabled={quantity >= product.quantity || isAddingToCart}
+					>
+						+
+					</button>
+				</div>
 
-			<!-- Add to Cart Button -->
-			<div class="mt-6">
-				<button
-					on:click={handleAddToCart}
-					class="w-full rounded bg-yellow-500 px-4 py-2 text-white hover:bg-yellow-600 disabled:bg-gray-400"
-					disabled={isOutOfStock || isAddingToCart}
-				>
-					{isAddingToCart ? 'Adding...' : 'Add to Cart'}
-				</button>
-			</div>
+				<!-- Add to Cart Button -->
+				<div class="mt-6">
+					<button
+						on:click={handleAddToCart}
+						class="w-full rounded bg-yellow-500 px-4 py-2 text-white hover:bg-yellow-600 disabled:bg-gray-400"
+						disabled={isOutOfStock || isAddingToCart}
+					>
+						{isAddingToCart ? 'Adding...' : 'Add to Cart'}
+					</button>
+				</div>
+			{/if}
 		</div>
 	</div>
 </div>
