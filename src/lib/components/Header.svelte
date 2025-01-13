@@ -56,9 +56,9 @@
 </script>
 
 <header
-	class="fixed top-0 z-[100] flex w-full items-center justify-between border-b bg-transparent px-6 py-4 shadow-md"
+	class="bg-white/2 fixed top-0 z-[100] flex w-full items-center justify-between border-b px-6 py-4 shadow-md backdrop-blur-sm"
 >
-	<div class="flex items-center gap-x-6 text-amber-400">
+	<div class="flex items-center gap-x-6 text-yellow-500">
 		<a href="/" class="text-2xl font-bold">RumahKosimBook</a>
 		<nav class="flex gap-4">
 			<a href="/client/about" class="text-sm text-stone-500 hover:text-amber-400">Tentang Kami</a>
