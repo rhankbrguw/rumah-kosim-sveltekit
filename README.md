@@ -120,7 +120,7 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Contact
 
-Instagram - @rhankbrguw_ (https://www.instagram.com/rhankbrguw_)
+Instagram - @rhankbrguw_ [https://www.instagram.com/rhankbrguw_]
 
 Linkedin - Raihan Akbar (https://www.linkedin.com/in/raihan-akbar-2b5820334/)
 
