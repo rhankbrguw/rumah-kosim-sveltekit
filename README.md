@@ -2,7 +2,6 @@
 
 A full-stack web application for managing books, built with **SvelteKit**, featuring user authentication and a robust book management system.
 
----
 
 ## 🚀 Technologies Used
 
@@ -19,7 +18,6 @@ A full-stack web application for managing books, built with **SvelteKit**, featu
 - **bcrypt** - Password hashing
 - **MySQL2** - Database connector and query builder
 
----
 
 ## ✨ Features
 
@@ -28,7 +26,6 @@ A full-stack web application for managing books, built with **SvelteKit**, featu
 - 📚 Book management system (CRUD operations)
 - 🔧 Admin Management (CRUD operations for administrative users)
 
----
 
 ## ⚙️ Prerequisites
 
@@ -38,7 +35,6 @@ Before running the project, make sure you have:
 - **MySQL** installed
 - **npm**, **pnpm**, or **yarn**
 
----
 
 ## 🛠️ Installation
 
@@ -75,7 +71,6 @@ JWT_SECRET="your_jwt_secret"
 5. Initialize the database:
    - Import the provided SQL scripts for database setup
 
----
 
 ## 🚧 Development
 
@@ -87,7 +82,6 @@ npm run dev
 npm run dev -- --open
 ```
 
----
 
 ## 🏗️ Building for Production
 
@@ -103,7 +97,6 @@ npm run build
 npm run preview
 ```
 
----
 
 ## 📂 Project Structure
 
@@ -126,28 +119,24 @@ RumahKosimBooks/
 └── package.json           
 ```
 
----
 
 ## ❗ Important
 
 This project is **not under any license** and is created solely for academic purposes as part of coursework. Further development or usage of this project is strictly for learning and academic assignments only.
 
----
 
 ## 📞 Contact
 
-- **Instagram**: [@rhankbrguw\_](https://www.instagram.com/rhankbrguw_)
-- **Facebook**: [Samael](https://www.facebook.com/Rhakbr/)
-- **LinkedIn**: [Raihan Akbar](https://www.linkedin.com/in/raihan-akbar-2b5820334/)
-- **GitHub**: [@Samaele13](https://github.com/Samaele13)
+- **Instagram** : [@rhankbrguw\_](https://www.instagram.com/rhankbrguw_)
+- **Facebook**  : [Samael](https://www.facebook.com/Rhakbr/)
+- **LinkedIn**  : [Raihan Akbar](https://www.linkedin.com/in/raihan-akbar-2b5820334/)
+- **GitHub**    : [@Samaele13](https://github.com/Samaele13)
 
----
 
 ## 🌟 Project Link
 
 Find the repository here: [https://github.com/Samaele13/rumah-kosim-sveltekit]
 
----
 
 ## 🙏 Acknowledgments
 
