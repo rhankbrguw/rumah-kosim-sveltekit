@@ -12,7 +12,9 @@
 	}
 </script>
 
-<section class="grid grid-cols-1 gap-8 p-24 px-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+<section
+	class="mb-6 mt-20 grid grid-cols-1 gap-8 p-24 px-4 py-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+>
 	{#each books as book}
 		<div
 			class="flex flex-col rounded-lg border p-4 shadow-lg transition-transform duration-300 hover:scale-105 hover:shadow-xl"
