@@ -122,10 +122,13 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 Instagram - @rhankbrguw_ [https://www.instagram.com/rhankbrguw_]
 
+Facebook - Samael [https://www.facebook.com/Rhakbr/]
+
 Linkedin - Raihan Akbar (https://www.linkedin.com/in/raihan-akbar-2b5820334/)
 
 GitHub - [@Samaele13] (https://github.com/Samaele13)
 
+**For more details about the project,**
 Project Link: (https://github.com/Samaele13/rumah-kosim-sveltekit)
 
 ## Acknowledgments
