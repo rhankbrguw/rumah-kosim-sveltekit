@@ -61,7 +61,7 @@
 	<div class="flex items-center gap-x-6 text-yellow-500">
 		<a href="/" class="text-2xl font-bold">RumahKosimBook</a>
 		<nav class="flex gap-4">
-			<a href="/client/about" class="text-sm text-stone-500 hover:text-amber-400">Tentang Kami</a>
+			<a href="/client/about" class="text-sm text-stone-500 hover:text-amber-400">About</a>
 			<a href="/client/shop" class="text-sm text-stone-500 hover:text-amber-400">Shop</a>
 		</nav>
 	</div>
