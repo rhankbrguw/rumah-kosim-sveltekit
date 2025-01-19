@@ -85,3 +85,45 @@ export async function POST({ request }) {
 		return json({ error: 'Failed to create review', details: err.message }, { status: 500 });
 	}
 }
+
+export async function GET({ request }) {
+	try {
+		const authHeader = request.headers.get('Authorization');
+		if (!authHeader?.startsWith('Bearer ')) {
+			return json({ error: 'Unauthorized' }, { status: 401 });
+		}
+
+		const token = authHeader.split(' ')[1];
+		let userId;
+
+		try {
+			const decoded = jwt.verify(token, process.env.JWT_SECRET);
+			userId = decoded.id;
+		} catch (err) {
+			return json({ error: 'Invalid token' }, { status: 401 });
+		}
+
+		const conn = await pool.getConnection();
+
+		try {
+			// Fetch all reviews for the user
+			const [reviews] = await conn.execute(
+				`SELECT r.*, p.title as product_title 
+                 FROM reviews r 
+                 JOIN products p ON r.product_id = p.id 
+                 WHERE r.user_id = ?`,
+				[userId]
+			);
+
+			return json(reviews);
+		} catch (err) {
+			console.error('Database error:', err);
+			return json({ error: 'Failed to fetch reviews' }, { status: 500 });
+		} finally {
+			conn.release();
+		}
+	} catch (err) {
+		console.error('Server error:', err);
+		return json({ error: 'Internal server error' }, { status: 500 });
+	}
+}

@@ -3,6 +3,7 @@
 	import { onMount } from 'svelte';
 	import { auth } from '$lib/stores/auth';
 	import ReviewModal from '$lib/components/ReviewModal.svelte';
+	import { StarIcon } from 'lucide-svelte';
 
 	let orders = [];
 	let loading = true;
@@ -22,22 +23,44 @@
 
 	async function fetchOrderHistory(token) {
 		try {
-			const response = await axios.get('/api/orders', {
-				headers: {
-					Authorization: `Bearer ${token}`
-				}
-			});
+			// Fetch orders and reviews simultaneously
+			const [ordersResponse, reviewsResponse] = await Promise.all([
+				axios.get('/api/orders', {
+					headers: {
+						Authorization: `Bearer ${token}`
+					}
+				}),
+				axios.get('/api/reviews', {
+					headers: {
+						Authorization: `Bearer ${token}`
+					}
+				})
+			]);
 
-			orders = response.data.map((order) => ({
+			const reviews = reviewsResponse.data;
+
+			// Map reviews to a more accessible format
+			const reviewsMap = reviews.reduce((acc, review) => {
+				const key = `${review.order_id}_${review.product_id}`;
+				acc[key] = review;
+				return acc;
+			}, {});
+
+			orders = ordersResponse.data.map((order) => ({
 				...order,
-				items: order.items.map((item) => ({
-					...item,
-					product_id: item.product_id || item.id,
-					reviewed: localStorage.getItem(`review_${order.id}_${item.product_id}`) === 'true'
-				}))
+				items: order.items.map((item) => {
+					const reviewKey = `${order.id}_${item.product_id || item.id}`;
+					const review = reviewsMap[reviewKey];
+					return {
+						...item,
+						product_id: item.product_id || item.id,
+						review: review || null,
+						reviewed: !!review
+					};
+				})
 			}));
 
-			console.log('Fetched orders:', orders);
+			console.log('Fetched orders with reviews:', orders);
 		} catch (err) {
 			console.error('Error fetching order history:', err);
 			error = err.response?.data?.error || 'Failed to load order history';
@@ -78,15 +101,12 @@
 				throw new Error(data.error || 'Failed to submit review');
 			}
 
-			// Store review status in localStorage
-			localStorage.setItem(`review_${selectedProduct.orderId}_${selectedProduct.id}`, 'true');
-
 			showReviewModal = false;
 			selectedProduct = null;
 
 			alert('Review submitted successfully!');
 
-			// Refresh the order history to update UI
+			// Refresh the order history to update UI with new review
 			await fetchOrderHistory(token);
 		} catch (error) {
 			console.error('Review submission failed:', error);
@@ -231,21 +251,37 @@
 													<p class="mt-1 text-sm text-stone-500">
 														{item.quantity} × Rp {parseInt(item.price_at_time).toLocaleString()}
 													</p>
-													{#if order.status === 'Delivered' && !item.reviewed}
-														<button
-															class="mt-2 rounded-md bg-amber-400 px-3 py-1 text-sm text-white hover:bg-amber-500"
-															on:click={() => {
-																selectedProduct = {
-																	id: item.product_id,
-																	orderId: order.id,
-																	title: item.title
-																};
-																console.log('Selected product:', selectedProduct);
-																showReviewModal = true;
-															}}
-														>
-															Review
-														</button>
+													{#if order.status === 'Delivered'}
+														{#if item.reviewed}
+															<div class="mt-2">
+																<div class="flex items-center gap-1">
+																	{#each Array(5) as _, i}
+																		<StarIcon
+																			size={16}
+																			class={i < item.review.rating
+																				? 'text-amber-400'
+																				: 'text-stone-300'}
+																		/>
+																	{/each}
+																</div>
+																<p class="mt-1 text-sm text-stone-600">{item.review.comment}</p>
+															</div>
+														{:else}
+															<button
+																class="mt-2 rounded-md bg-amber-400 px-3 py-1 text-sm text-white hover:bg-amber-500"
+																on:click={() => {
+																	selectedProduct = {
+																		id: item.product_id,
+																		orderId: order.id,
+																		title: item.title
+																	};
+																	console.log('Selected product:', selectedProduct);
+																	showReviewModal = true;
+																}}
+															>
+																Review
+															</button>
+														{/if}
 													{/if}
 												</div>
 												<div class="text-right">
