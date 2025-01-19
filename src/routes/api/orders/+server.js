@@ -53,7 +53,7 @@ export async function GET({ request }) {
 		for (let order of orders) {
 			const [items] = await connection.execute(
 				`SELECT 
-                    oi.quantity, oi.price_at_time,
+                    oi.quantity, oi.price_at_time, oi.product_id,
                     p.title, p.image
                 FROM order_items oi
                 JOIN products p ON p.id = oi.product_id

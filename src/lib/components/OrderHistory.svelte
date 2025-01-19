@@ -2,11 +2,14 @@
 	import axios from 'axios';
 	import { onMount } from 'svelte';
 	import { auth } from '$lib/stores/auth';
+	import ReviewModal from '$lib/components/ReviewModal.svelte';
 
 	let orders = [];
 	let loading = true;
 	let error = null;
 	let expandedOrderId = null;
+	let showReviewModal = false;
+	let selectedProduct = null;
 
 	onMount(async () => {
 		const token = localStorage.getItem('authToken');
@@ -24,7 +27,17 @@
 					Authorization: `Bearer ${token}`
 				}
 			});
-			orders = response.data;
+
+			orders = response.data.map((order) => ({
+				...order,
+				items: order.items.map((item) => ({
+					...item,
+					product_id: item.product_id || item.id,
+					reviewed: localStorage.getItem(`review_${order.id}_${item.product_id}`) === 'true'
+				}))
+			}));
+
+			console.log('Fetched orders:', orders);
 		} catch (err) {
 			console.error('Error fetching order history:', err);
 			error = err.response?.data?.error || 'Failed to load order history';
@@ -46,6 +59,41 @@
 		};
 		return colors[status] || 'bg-stone-100 text-stone-800 border border-stone-200';
 	}
+
+	async function handleReviewSubmit(event) {
+		try {
+			console.log('Review submission data:', event.detail);
+			const token = localStorage.getItem('authToken');
+			const response = await fetch('/api/reviews', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${token}`
+				},
+				body: JSON.stringify(event.detail)
+			});
+
+			if (!response.ok) {
+				const data = await response.json();
+				throw new Error(data.error || 'Failed to submit review');
+			}
+
+			// Store review status in localStorage
+			localStorage.setItem(`review_${selectedProduct.orderId}_${selectedProduct.id}`, 'true');
+
+			showReviewModal = false;
+			selectedProduct = null;
+
+			alert('Review submitted successfully!');
+
+			// Refresh the order history to update UI
+			await fetchOrderHistory(token);
+		} catch (error) {
+			console.error('Review submission failed:', error);
+			alert('Failed to submit review. Please try again.');
+			throw error;
+		}
+	}
 </script>
 
 <div class="container mx-auto max-w-5xl px-4 py-8">
@@ -57,7 +105,7 @@
 		<div class="flex justify-center py-12">
 			<div class="w-full animate-pulse space-y-4">
 				{#each Array(3) as _}
-					<div class="h-40 rounded-lg bg-stone-100"></div>
+					<div class="h-40 rounded-lg bg-stone-100" />
 				{/each}
 			</div>
 		</div>
@@ -115,7 +163,9 @@
 							</div>
 							<div class="space-y-2 text-right">
 								<div
-									class={`inline-block rounded-full px-4 py-1 text-sm font-medium ${getStatusColor(order.status)}`}
+									class={`inline-block rounded-full px-4 py-1 text-sm font-medium ${getStatusColor(
+										order.status
+									)}`}
 								>
 									{order.status}
 								</div>
@@ -181,6 +231,22 @@
 													<p class="mt-1 text-sm text-stone-500">
 														{item.quantity} × Rp {parseInt(item.price_at_time).toLocaleString()}
 													</p>
+													{#if order.status === 'Delivered' && !item.reviewed}
+														<button
+															class="mt-2 rounded-md bg-amber-400 px-3 py-1 text-sm text-white hover:bg-amber-500"
+															on:click={() => {
+																selectedProduct = {
+																	id: item.product_id,
+																	orderId: order.id,
+																	title: item.title
+																};
+																console.log('Selected product:', selectedProduct);
+																showReviewModal = true;
+															}}
+														>
+															Review
+														</button>
+													{/if}
 												</div>
 												<div class="text-right">
 													<p class="font-semibold text-stone-600">
@@ -224,3 +290,13 @@
 		</div>
 	{/if}
 </div>
+
+<ReviewModal
+	product={selectedProduct}
+	isOpen={showReviewModal}
+	on:close={() => {
+		showReviewModal = false;
+		selectedProduct = null;
+	}}
+	on:submit={handleReviewSubmit}
+/>
