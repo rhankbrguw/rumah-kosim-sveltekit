@@ -88,9 +88,7 @@
 			<div class="group relative">
 				<div class="flex cursor-pointer items-center gap-1 group-hover:underline md:gap-2">
 					<img src="/images/profile.png" alt="Profile" class="h-6 w-6 rounded-full md:h-8 md:w-8" />
-					<span class="text-sm text-stone-500 hover:text-amber-400 md:text-base"
-						>{user?.username}</span
-					>
+					<span class="hidden text-stone-500 hover:text-amber-400 md:inline">{user?.username}</span>
 				</div>
 				<div class="absolute right-0 hidden w-48 rounded bg-white shadow-md group-hover:block">
 					{#if user?.role === 'admin'}
