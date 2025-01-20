@@ -54,18 +54,18 @@
 	}
 </script>
 
-<div class="mx-auto mt-20 max-w-5xl px-8 py-6">
+<div class="mx-auto mt-20 max-w-5xl px-4 py-6 sm:px-8">
 	<!-- Checkout content -->
-	<div class="grid grid-cols-[1fr,auto] gap-16">
+	<div class="grid grid-cols-1 gap-8 lg:grid-cols-[1fr,auto] lg:gap-16">
 		<div>
-			<h1 class="mb-6 text-2xl font-semibold">Checkout</h1>
+			<h1 class="mb-6 text-xl font-semibold sm:text-2xl">Checkout</h1>
 
 			<!-- Progress -->
-			<div class="mb-8 flex items-center">
+			<div class="mb-8 flex items-center text-sm sm:text-base">
 				<span class="text-gray-500">Address</span>
-				<div class="mx-4 flex-1 border-t border-gray-300"></div>
+				<div class="mx-2 flex-1 border-t border-gray-300 sm:mx-4"></div>
 				<span class="font-medium text-black">Shipping</span>
-				<div class="mx-4 flex-1 border-t border-gray-300"></div>
+				<div class="mx-2 flex-1 border-t border-gray-300 sm:mx-4"></div>
 				<span class="text-gray-500">Payment</span>
 			</div>
 
@@ -73,7 +73,7 @@
 			<div class="space-y-4">
 				{#each shippingOptions as option}
 					<label
-						class="block cursor-pointer rounded-lg border p-4 hover:border-black
+						class="block cursor-pointer rounded-lg border p-3 hover:border-black sm:p-4
             {selectedShipping === option.id ? 'border-black' : 'border-gray-200'}"
 					>
 						<div class="flex items-center">
@@ -86,8 +86,8 @@
 								class="mr-3"
 							/>
 							<div>
-								<div class="font-medium">{option.label}</div>
-								<div class="text-sm text-gray-500">{option.duration}</div>
+								<div class="text-sm font-medium sm:text-base">{option.label}</div>
+								<div class="text-xs text-gray-500 sm:text-sm">{option.duration}</div>
 							</div>
 						</div>
 					</label>
@@ -96,27 +96,29 @@
 
 			<button
 				on:click={handleContinue}
-				class="mt-6 w-full rounded-lg bg-black py-3 text-white hover:bg-gray-800"
+				class="mt-6 w-full rounded-lg bg-black py-2 text-white hover:bg-gray-800 sm:py-3"
 			>
 				Continue to payment
 			</button>
 		</div>
 
 		<!-- Order summary -->
-		<div class="w-80">
-			<h2 class="-mt-2 mb-4 text-2xl font-semibold">Your Cart</h2>
+		<div class="w-full lg:w-80">
+			<h2 class="-mt-2 mb-4 text-xl font-semibold sm:text-2xl">Your Cart</h2>
 			<div class="mt-8 space-y-4">
 				{#each cartItems as item}
-					<div class="flex gap-4">
+					<div class="flex gap-3 sm:gap-4">
 						<img
 							src="/images/{item.image.split('/').pop()}"
 							alt={item.title}
-							class="h-20 w-16 rounded object-cover"
+							class="h-16 w-12 rounded object-cover sm:h-20 sm:w-16"
 						/>
 						<div>
-							<h3 class="font-medium">{item.title}</h3>
-							<p class="text-sm text-gray-500">Qty: {item.quantity}</p>
-							<p class="mt-2 text-gray-700">Rp {item.price.toLocaleString()}</p>
+							<h3 class="text-sm font-medium sm:text-base">{item.title}</h3>
+							<p class="text-xs text-gray-500 sm:text-sm">Qty: {item.quantity}</p>
+							<p class="mt-1 text-sm text-gray-700 sm:mt-2 sm:text-base">
+								Rp {item.price.toLocaleString()}
+							</p>
 						</div>
 					</div>
 					<hr class="mb-4 mt-4 border-gray-600" />
@@ -127,11 +129,11 @@
 			<input
 				type="text"
 				placeholder="Enter coupon code here"
-				class="mt-6 w-full rounded-lg border p-2"
+				class="mt-6 w-full rounded-lg border p-2 text-sm sm:text-base"
 			/>
 
 			<!-- Totals -->
-			<div class="mt-4 space-y-2">
+			<div class="mt-4 space-y-2 text-sm sm:text-base">
 				<br />
 				<hr class="mb-4 border-gray-300" />
 				<div class="flex justify-between">

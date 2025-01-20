@@ -270,16 +270,19 @@
 </script>
 
 <div class="min-h-screen bg-[#F8F9FA]">
-	<div class="container mx-auto px-8 py-8">
+	<div class="container mx-auto px-4 py-4 sm:px-8 sm:py-8">
 		<!-- Logo header -->
-		<div class="mb-8 mt-20">
-			<h1 class="mt-8 text-2xl font-bold">Kosim<span class="text-[#FF5C00]">Book</span> Admin</h1>
+		<div class="mb-6 mt-16 sm:mb-8 sm:mt-20">
+			<h1 class="text-xl font-bold sm:text-2xl">
+				Kosim<span class="text-[#FF5C00]">Book</span> Admin
+			</h1>
 		</div>
 
 		<!-- Tab buttons with updated styling -->
-		<div class="mb-6 flex gap-2">
+		<div class="mb-4 flex gap-2 sm:mb-6">
 			<button
-				class="rounded-[4px] px-4 py-2 font-medium transition-colors {activeTab === 'products'
+				class="rounded-[4px] px-3 py-2 text-sm font-medium transition-colors sm:px-4 sm:text-base {activeTab ===
+				'products'
 					? 'bg-[#FF5C00] text-white'
 					: 'bg-white text-gray-800'}"
 				on:click={() => {
@@ -290,7 +293,8 @@
 				Product List
 			</button>
 			<button
-				class="rounded-[4px] px-4 py-2 font-medium transition-colors {activeTab === 'orders'
+				class="rounded-[4px] px-3 py-2 text-sm font-medium transition-colors sm:px-4 sm:text-base {activeTab ===
+				'orders'
 					? 'bg-[#FF5C00] text-white'
 					: 'bg-white text-gray-800'}"
 				on:click={() => {
@@ -304,16 +308,18 @@
 
 		<!-- Products Table Section -->
 		{#if activeTab === 'products'}
-			<div class="rounded-lg bg-white p-4 shadow-sm">
-				<div class="mb-6 flex items-center justify-between">
+			<div class="rounded-lg bg-white p-3 shadow-sm sm:p-4">
+				<div
+					class="mb-4 flex flex-col justify-between gap-3 sm:mb-6 sm:flex-row sm:items-center sm:gap-0"
+				>
 					<input
 						type="text"
-						class="w-64 rounded-[4px] border border-gray-200 px-4 py-2"
+						class="w-full rounded-[4px] border border-gray-200 px-3 py-2 text-sm sm:w-64 sm:px-4 sm:text-base"
 						placeholder="Search products..."
 						bind:value={searchTerm}
 					/>
 					<button
-						class="flex items-center gap-2 rounded-[4px] bg-[#FF5C00] px-4 py-2 text-white hover:bg-[#FF5C00]/90"
+						class="flex items-center justify-center gap-2 rounded-[4px] bg-[#FF5C00] px-4 py-2 text-sm text-white hover:bg-[#FF5C00]/90 sm:text-base"
 						on:click={() => (showAddModal = true)}
 					>
 						<Plus size="18" />
@@ -322,124 +328,236 @@
 				</div>
 
 				<!-- Updated Products Table -->
-				<table class="w-full">
-					<thead>
-						<tr class="border-b text-left">
-							<th class="pb-4 font-medium text-gray-600">Title</th>
-							<th class="pb-4 font-medium text-gray-600">Price</th>
-							<th class="pb-4 font-medium text-gray-600">Stock</th>
-							<th class="pb-4 font-medium text-gray-600">Picture</th>
-							<th class="pb-4 font-medium text-gray-600">Action</th>
-						</tr>
-					</thead>
-					<tbody>
-						{#each products.filter((product) => product.title
-								.toLowerCase()
-								.includes(searchTerm.toLowerCase())) as product}
-							<tr class="border-b">
-								<td class="py-4">{product.title}</td>
-								<td class="py-4">{formatIDR(product.price)}</td>
-								<td class="py-4">{product.quantity}</td>
-								<td class="py-4">
-									<div class="flex items-center gap-2">
-										<img
-											src={product.image}
-											alt={product.title}
-											class="h-10 w-10 rounded-sm object-cover"
-										/>
-										<label
-											class="cursor-pointer rounded-[4px] bg-gray-100 px-3 py-1 text-sm hover:bg-gray-200"
-										>
-											<input
-												type="file"
-												class="hidden"
-												on:change={(e) => handleFileSelect(e, product.id)}
-												accept="image/*"
-											/>
-											Upload Image
-										</label>
-									</div>
-								</td>
-								<td class="py-4">
-									<div class="flex gap-2">
-										<button
-											class="rounded-[4px] bg-blue-500 p-1.5 text-white hover:bg-blue-600"
-											on:click={() => {
-												showEditModal = true;
-												editingProduct = product;
-												stockEdit.quantity = product.quantity;
-											}}
-										>
-											<Pencil size="16" />
-										</button>
-										<button
-											class="rounded-[4px] bg-red-500 p-1.5 text-white hover:bg-red-600"
-											on:click={() => handleDeleteProduct(product.id)}
-										>
-											<Trash2 size="16" />
-										</button>
-									</div>
-								</td>
+				<div class="hidden sm:block">
+					<table class="w-full">
+						<thead>
+							<tr class="border-b text-left">
+								<th class="pb-4 font-medium text-gray-600">Title</th>
+								<th class="pb-4 font-medium text-gray-600">Price</th>
+								<th class="pb-4 font-medium text-gray-600">Stock</th>
+								<th class="pb-4 font-medium text-gray-600">Picture</th>
+								<th class="pb-4 font-medium text-gray-600">Action</th>
 							</tr>
-						{/each}
-					</tbody>
-				</table>
+						</thead>
+						<tbody>
+							{#each products.filter((product) => product.title
+									.toLowerCase()
+									.includes(searchTerm.toLowerCase())) as product}
+								<tr class="border-b">
+									<td class="py-4">{product.title}</td>
+									<td class="py-4">{formatIDR(product.price)}</td>
+									<td class="py-4">{product.quantity}</td>
+									<td class="py-4">
+										<div class="flex items-center gap-2">
+											<img
+												src={product.image}
+												alt={product.title}
+												class="h-10 w-10 rounded-sm object-cover"
+											/>
+											<label
+												class="cursor-pointer rounded-[4px] bg-gray-100 px-3 py-1 text-sm hover:bg-gray-200"
+											>
+												<input
+													type="file"
+													class="hidden"
+													on:change={(e) => handleFileSelect(e, product.id)}
+													accept="image/*"
+												/>
+												Upload Image
+											</label>
+										</div>
+									</td>
+									<td class="py-4">
+										<div class="flex gap-2">
+											<button
+												class="rounded-[4px] bg-blue-500 p-1.5 text-white hover:bg-blue-600"
+												on:click={() => {
+													showEditModal = true;
+													editingProduct = product;
+													stockEdit.quantity = product.quantity;
+												}}
+											>
+												<Pencil size="16" />
+											</button>
+											<button
+												class="rounded-[4px] bg-red-500 p-1.5 text-white hover:bg-red-600"
+												on:click={() => handleDeleteProduct(product.id)}
+											>
+												<Trash2 size="16" />
+											</button>
+										</div>
+									</td>
+								</tr>
+							{/each}
+						</tbody>
+					</table>
+				</div>
+
+				<!-- Mobile View -->
+				<div class="space-y-4 sm:hidden">
+					{#each products.filter((product) => product.title
+							.toLowerCase()
+							.includes(searchTerm.toLowerCase())) as product}
+						<div class="space-y-3 rounded-lg border p-3">
+							<div class="flex items-center gap-3">
+								<img
+									src={product.image}
+									alt={product.title}
+									class="h-16 w-16 rounded-sm object-cover"
+								/>
+								<div>
+									<h3 class="font-medium">{product.title}</h3>
+									<p class="text-gray-600">{formatIDR(product.price)}</p>
+									<p class="text-sm text-gray-500">Stock: {product.quantity}</p>
+								</div>
+							</div>
+
+							<div class="flex items-center justify-between pt-2">
+								<label
+									class="cursor-pointer rounded-[4px] bg-gray-100 px-3 py-1.5 text-sm hover:bg-gray-200"
+								>
+									<input
+										type="file"
+										class="hidden"
+										on:change={(e) => handleFileSelect(e, product.id)}
+										accept="image/*"
+									/>
+									Upload Image
+								</label>
+								<div class="flex gap-2">
+									<button
+										class="rounded-[4px] bg-blue-500 p-1.5 text-white hover:bg-blue-600"
+										on:click={() => {
+											showEditModal = true;
+											editingProduct = product;
+											stockEdit.quantity = product.quantity;
+										}}
+									>
+										<Pencil size="16" />
+									</button>
+									<button
+										class="rounded-[4px] bg-red-500 p-1.5 text-white hover:bg-red-600"
+										on:click={() => handleDeleteProduct(product.id)}
+									>
+										<Trash2 size="16" />
+									</button>
+								</div>
+							</div>
+						</div>
+					{/each}
+				</div>
 			</div>
 		{:else if activeTab === 'orders'}
 			<!-- Orders Table Section -->
-			<div class="rounded-lg bg-white p-4 shadow-sm">
-				<table class="w-full">
-					<thead>
-						<tr class="border-b text-left">
-							<th class="pb-4 font-medium text-gray-600">Order ID</th>
-							<th class="pb-4 font-medium text-gray-600">Title</th>
-							<th class="pb-4 font-medium text-gray-600">Username</th>
-							<th class="pb-4 font-medium text-gray-600">Qty</th>
-							<th class="pb-4 font-medium text-gray-600">Price/pcs</th>
-							<th class="pb-4 font-medium text-gray-600">Total</th>
-							<th class="pb-4 font-medium text-gray-600">Status</th>
-							<th class="pb-4 font-medium text-gray-600">Action</th>
-						</tr>
-					</thead>
-					<tbody>
-						{#each orders as order}
-							<tr class="border-b">
-								<td class="py-4">#{order.id}</td>
-								<td class="py-4">{order.title}</td>
-								<td class="py-4">{order.username}</td>
-								<td class="py-4">{order.quantity}</td>
-								<td class="py-4">{formatIDR(order.price_at_time)}</td>
-								<td class="py-4">{formatIDR(order.total)}</td>
-								<td class="py-4">
+			<div class="rounded-lg bg-white p-3 shadow-sm sm:p-4">
+				<!-- Desktop Table (hidden on mobile) -->
+				<div class="hidden sm:block">
+					<table class="w-full">
+						<thead>
+							<tr class="border-b text-left">
+								<th class="pb-4 font-medium text-gray-600">Order ID</th>
+								<th class="pb-4 font-medium text-gray-600">Title</th>
+								<th class="pb-4 font-medium text-gray-600">Username</th>
+								<th class="pb-4 font-medium text-gray-600">Qty</th>
+								<th class="pb-4 font-medium text-gray-600">Price/pcs</th>
+								<th class="pb-4 font-medium text-gray-600">Total</th>
+								<th class="pb-4 font-medium text-gray-600">Status</th>
+								<th class="pb-4 font-medium text-gray-600">Action</th>
+							</tr>
+						</thead>
+						<tbody>
+							{#each orders as order}
+								<tr class="border-b">
+									<td class="py-4">#{order.id}</td>
+									<td class="py-4">{order.title}</td>
+									<td class="py-4">{order.username}</td>
+									<td class="py-4">{order.quantity}</td>
+									<td class="py-4">{formatIDR(order.price_at_time)}</td>
+									<td class="py-4">{formatIDR(order.total)}</td>
+									<td class="py-4">
+										<span
+											class="rounded-full px-3 py-1 text-sm text-white {getStatusColor(
+												order.status
+											)}"
+										>
+											{order.status}
+										</span>
+									</td>
+									<td class="py-4">
+										<select
+											class="rounded-[4px] border border-gray-200 px-3 py-1.5 text-sm"
+											bind:value={order.status}
+											on:change={(e) => updateOrderStatus(order.id, e.target.value)}
+										>
+											<option value="Processing">Processing</option>
+											<option value="Shipping">Shipping</option>
+											<option value="Delivered">Delivered</option>
+										</select>
+									</td>
+								</tr>
+							{/each}
+						</tbody>
+					</table>
+				</div>
+
+				<!-- Mobile Card View -->
+				<div class="space-y-4 sm:hidden">
+					{#each orders as order}
+						<div class="space-y-3 rounded-lg border p-3">
+							<div class="space-y-2">
+								<div class="flex items-start justify-between">
+									<div>
+										<p class="text-sm text-gray-500">Order #{order.id}</p>
+										<h3 class="font-medium">{order.title}</h3>
+										<p class="text-sm text-gray-500">{order.username}</p>
+									</div>
 									<span
 										class="rounded-full px-3 py-1 text-sm text-white {getStatusColor(order.status)}"
 									>
 										{order.status}
 									</span>
-								</td>
-								<td class="py-4">
-									<select
-										class="rounded-[4px] border border-gray-200 px-3 py-1.5 text-sm"
-										bind:value={order.status}
-										on:change={(e) => updateOrderStatus(order.id, e.target.value)}
-									>
-										<option value="Processing">Processing</option>
-										<option value="Shipping">Shipping</option>
-										<option value="Delivered">Delivered</option>
-									</select>
-								</td>
-							</tr>
-						{/each}
-					</tbody>
-				</table>
+								</div>
+
+								<div class="grid grid-cols-2 gap-2 text-sm">
+									<div>
+										<p class="text-gray-500">Quantity</p>
+										<p>{order.quantity}</p>
+									</div>
+									<div>
+										<p class="text-gray-500">Price/pcs</p>
+										<p>{formatIDR(order.price_at_time)}</p>
+									</div>
+								</div>
+
+								<div class="pt-2">
+									<p class="text-sm text-gray-500">Total</p>
+									<p class="font-medium">{formatIDR(order.total)}</p>
+								</div>
+							</div>
+
+							<div class="border-t pt-2">
+								<select
+									class="w-full rounded-[4px] border border-gray-200 px-3 py-2 text-sm"
+									bind:value={order.status}
+									on:change={(e) => updateOrderStatus(order.id, e.target.value)}
+								>
+									<option value="Processing">Processing</option>
+									<option value="Shipping">Shipping</option>
+									<option value="Delivered">Delivered</option>
+								</select>
+							</div>
+						</div>
+					{/each}
+				</div>
 			</div>
 		{/if}
 
 		<!-- Modal -->
 		<!-- Add Product -->
 		{#if showAddModal}
-			<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 pb-6 pt-24">
-				<div class="w-[400px] rounded-lg bg-white p-5">
+			<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 pb-6 pt-24">
+				<div class="w-full max-w-[400px] rounded-lg bg-white p-4 sm:p-5">
+					>
 					<div class="mb-4 flex items-center justify-between">
 						<h2 class="text-lg font-semibold text-gray-800">Add Product</h2>
 						<button
@@ -554,8 +672,8 @@
 
 		<!-- Edit Stock -->
 		{#if showEditModal}
-			<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-				<div class="w-[400px] rounded-lg bg-white p-6">
+			<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+				<div class="w-full max-w-[400px] rounded-lg bg-white p-4 sm:p-6">
 					<div class="mb-6 flex items-center justify-between">
 						<h2 class="text-xl font-semibold text-gray-800">Update Stock</h2>
 						<button
