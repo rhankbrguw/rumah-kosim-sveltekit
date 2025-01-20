@@ -20,9 +20,9 @@
 	);
 </script>
 
-<section class="mt-20 p-24 px-4 py-4">
+<section class="mt-16 p-4 sm:mt-20 sm:p-24 sm:px-4 sm:py-4">
 	<!-- Search input -->
-	<div class="relative mb-6">
+	<div class="relative mb-4 sm:mb-6">
 		<div class="relative">
 			<input
 				type="text"
@@ -37,24 +37,45 @@
 	</div>
 
 	<!-- Books grid -->
-	<div class="mb-6 grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+	<div class="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-1 sm:gap-8 md:grid-cols-3 lg:grid-cols-4">
 		{#each filteredBooks as book}
 			<div
-				class="flex flex-col rounded-lg border p-4 shadow-lg transition-transform duration-300 hover:scale-105 hover:shadow-xl"
+				class="flex h-full flex-col rounded-lg border p-2 shadow-lg transition-transform duration-300 hover:scale-105 hover:shadow-xl sm:p-4"
 			>
-				<img
-					src={book.image}
-					alt={book.title}
-					class="mb-4 h-64 w-full rounded-md object-cover transition-transform duration-300 hover:scale-110"
-					on:error={(e) => (e.target.src = '/images/placeholder.jpg')}
-					loading="lazy"
-				/>
-				<h3 class="text-lg font-bold">{book.title}</h3>
-				<p class="text-red-500">{formatRupiah(book.price)}</p>
-				<p class="mt-2 text-sm text-gray-600">{book.description.slice(0, 50)}...</p>
-				<button class="mt-2 text-blue-500 hover:underline" on:click={() => goToProduct(book.id)}>
-					Show More
-				</button>
+				<div class="mb-2 aspect-[3/4] w-full sm:mb-4 sm:h-64">
+					<img
+						src={book.image}
+						alt={book.title}
+						class="h-full w-full rounded-md object-contain transition-transform duration-300 hover:scale-110 sm:object-cover"
+						on:error={(e) => (e.target.src = '/images/placeholder.jpg')}
+						loading="lazy"
+					/>
+				</div>
+				<div class="flex flex-1 flex-col">
+					<div class="flex-1">
+						<h3 class="line-clamp-2 text-sm font-bold sm:text-lg">{book.title}</h3>
+						<p class="text-sm text-red-500 sm:text-base">{formatRupiah(book.price)}</p>
+						<p class="mt-1 line-clamp-2 text-xs text-gray-600 sm:mt-2 sm:text-sm">
+							{book.description}
+						</p>
+					</div>
+
+					<!-- Different button styles for mobile and desktop -->
+					<div class="mt-2 sm:mt-4">
+						<button
+							class="hidden text-blue-500 hover:underline sm:block"
+							on:click={() => goToProduct(book.id)}
+						>
+							Show More...
+						</button>
+						<button
+							class="w-full rounded-md bg-amber-400 px-2 py-1.5 text-xs text-white sm:hidden"
+							on:click={() => goToProduct(book.id)}
+						>
+							Show More
+						</button>
+					</div>
+				</div>
 			</div>
 		{/each}
 	</div>

@@ -132,7 +132,6 @@
 				return;
 			}
 
-			// Otherwise validate and submit full form
 			if (
 				!firstName ||
 				!lastName ||
@@ -183,42 +182,45 @@
 		} finally {
 			loading = false;
 		}
-	};
+	}
 </script>
 
 <div class="min-h-screen bg-white">
-	<main class="mx-auto mt-12 max-w-7xl px-16 py-10">
-		<h1 class="mb-8 text-2xl font-medium">Checkout</h1>
-		<div class="flex flex-col gap-12 md:flex-row">
-			<!-- Left Column - Form -->
+	<main class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-16 lg:py-10">
+		<h1 class="mb-6 mt-16 text-xl font-medium font-semibold sm:mb-8 sm:text-2xl">Checkout</h1>
+
+		<!-- Progress Steps - More compact on mobile -->
+		<div class="flex flex-col gap-8 lg:flex-row">
 			<div class="flex-1">
-				<div class="mb-8 flex items-center">
+				<div class="mb-6 flex items-center text-sm sm:mb-8 sm:text-base">
 					<span class="font-medium text-black">Address</span>
-					<div class="mx-4 flex-1 border-t border-gray-300"></div>
+					<div class="mx-2 flex-1 border-t border-gray-300 sm:mx-4"></div>
 					<span class="text-gray-500">Shipping</span>
-					<div class="mx-4 flex-1 border-t border-gray-300"></div>
+					<div class="mx-2 flex-1 border-t border-gray-300 sm:mx-4"></div>
 					<span class="text-gray-500">Payment</span>
 				</div>
-				<h2 class="mb-4 text-lg font-semibold">Detail Shipping</h2>
+
+				<h2 class="mb-4 text-base font-semibold sm:text-lg">Detail Shipping</h2>
 
 				{#if error}
 					<div class="mb-4 text-sm text-red-600">{error}</div>
 				{/if}
 
-				<form on:submit|preventDefault={handleSubmit} class="space-y-4">
-					<div class="grid grid-cols-2 gap-4">
+				<form on:submit|preventDefault={handleSubmit} class="space-y-4 sm:space-y-6">
+					<!-- Name Fields - Stack on mobile -->
+					<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
 						<input
 							type="text"
 							bind:value={firstName}
 							placeholder="First name"
-							class="w-full rounded-lg border border-gray-200 px-3 py-2 focus:border-black focus:ring-2 focus:ring-black/10"
+							class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-black focus:ring-2 focus:ring-black/10 sm:text-base"
 							required
 						/>
 						<input
 							type="text"
 							bind:value={lastName}
 							placeholder="Last name"
-							class="w-full rounded-lg border border-gray-200 px-3 py-2 focus:border-black focus:ring-2 focus:ring-black/10"
+							class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-black focus:ring-2 focus:ring-black/10 sm:text-base"
 							required
 						/>
 					</div>
@@ -227,21 +229,22 @@
 						type="text"
 						bind:value={address}
 						placeholder="Address"
-						class="w-full rounded-lg border border-gray-200 px-3 py-2 focus:border-black focus:ring-2 focus:ring-black/10"
+						class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-black focus:ring-2 focus:ring-black/10 sm:text-base"
 						required
 					/>
 					<input
 						type="text"
 						bind:value={apartment}
 						placeholder="Apartment, suite, etc. (optional)"
-						class="w-full rounded-lg border border-gray-200 px-3 py-2 focus:border-black focus:ring-2 focus:ring-black/10"
+						class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-black focus:ring-2 focus:ring-black/10 sm:text-base"
 					/>
 
-					<div class="grid grid-cols-2 gap-4">
+					<!-- Location Fields - Stack on mobile -->
+					<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
 						<select
 							bind:value={city}
 							on:change={updateDistricts}
-							class="w-full rounded-lg border border-gray-200 px-3 py-2 focus:border-black focus:ring-2 focus:ring-black/10"
+							class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-black focus:ring-2 focus:ring-black/10 sm:text-base"
 							required
 						>
 							<option value="">Select City</option>
@@ -253,7 +256,7 @@
 						<select
 							bind:value={district}
 							on:change={updateSubdistricts}
-							class="w-full rounded-lg border border-gray-200 px-3 py-2 focus:border-black focus:ring-2 focus:ring-black/10"
+							class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-black focus:ring-2 focus:ring-black/10 sm:text-base"
 							required
 						>
 							<option value="">Select District</option>
@@ -263,10 +266,10 @@
 						</select>
 					</div>
 
-					<div class="grid grid-cols-2 gap-4">
+					<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
 						<select
 							bind:value={subdistrict}
-							class="w-full rounded-lg border border-gray-200 px-3 py-2 focus:border-black focus:ring-2 focus:ring-black/10"
+							class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-black focus:ring-2 focus:ring-black/10 sm:text-base"
 							required
 						>
 							<option value="">Select Subdistrict</option>
@@ -279,8 +282,8 @@
 							type="text"
 							bind:value={postalCode}
 							placeholder="Postal code"
-							on:input={(e) => postalCode = e.target.value.slice(0, 5)}
-							class="w-full rounded-lg border border-gray-200 px-3 py-2 focus:border-black focus:ring-2 focus:ring-black/10"
+							on:input={(e) => (postalCode = e.target.value.slice(0, 5))}
+							class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-black focus:ring-2 focus:ring-black/10 sm:text-base"
 							required
 						/>
 					</div>
@@ -293,46 +296,46 @@
 					<button
 						type="submit"
 						disabled={loading}
-						class="mt-4 w-full rounded-lg bg-black py-3 text-white hover:bg-gray-800 disabled:opacity-50"
+						class="mt-4 w-full rounded-lg bg-black py-3 text-sm text-white hover:bg-gray-800 disabled:opacity-50 sm:text-base"
 					>
 						{loading ? 'Processing...' : 'Continue to shipping'}
 					</button>
 				</form>
 			</div>
 
-			<!-- Right Column - Cart Summary -->
-			<div class="w-full px-6 md:w-[400px]">
-				<h2 class="-mt-8 mb-6 text-2xl font-semibold">Your Cart</h2>
+			<!-- Cart Summary - Full width on mobile -->
+			<div class="mt-8 w-full bg-gray-50 p-4 lg:mt-0 lg:w-[400px] lg:bg-transparent lg:p-6">
+				<h2 class="mb-6 text-xl font-semibold sm:text-2xl">Your Cart</h2>
 				<div class="space-y-4">
 					{#each cartItems as item}
-						<div class="flex items-start justify-between">
-							<div class="flex gap-4">
-								<div class="h-24 w-20 overflow-hidden rounded">
+						<div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+							<div class="flex gap-3 sm:gap-4">
+								<div class="h-16 w-16 overflow-hidden rounded sm:h-24 sm:w-20">
 									<img src={item.image} alt={item.title} class="h-full w-full object-cover" />
 								</div>
-								<div>
-									<h3 class="font-medium">{item.title}</h3>
-									<p class="text-sm text-gray-500">Qty: {item.quantity}</p>
-									<p class="mt-2 text-gray-700">Rp {item.price.toLocaleString()}</p>
+								<div class="min-w-0 flex-1">
+									<h3 class="text-sm font-medium sm:text-base">{item.title}</h3>
+									<p class="text-xs text-gray-500 sm:text-sm">Qty: {item.quantity}</p>
+									<p class="mt-1 text-sm text-gray-700 sm:mt-2">
+										Rp {item.price.toLocaleString()}
+									</p>
 								</div>
 							</div>
 						</div>
-						<hr class="mb-4 mt-4 border-gray-600" />
+						<hr class="my-4 border-gray-200" />
 					{/each}
 				</div>
 
-				<br />
-
 				<div class="mt-6 space-y-4 border-t pt-4">
-					<div class="flex justify-between">
+					<div class="flex justify-between text-sm sm:text-base">
 						<span class="text-gray-600">Subtotal</span>
 						<span>Rp {subtotal.toLocaleString()}</span>
 					</div>
-					<div class="flex justify-between">
+					<div class="flex justify-between text-sm sm:text-base">
 						<span class="text-gray-600">Shipping</span>
 						<span><i>Calculated later.</i></span>
 					</div>
-					<div class="flex justify-between border-t pt-4 font-medium">
+					<div class="flex justify-between border-t pt-4 text-sm font-medium sm:text-base">
 						<span>Total</span>
 						<span>Rp {total.toLocaleString()}</span>
 					</div>
