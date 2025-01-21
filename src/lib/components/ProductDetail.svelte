@@ -111,8 +111,10 @@
 </script>
 
 <div class="fixed inset-0">
-	<div class="h-full w-full pt-56 md:pt-0 overflow-y-auto md:overflow-y-hidden">
-		<div class="mx-auto h-full flex items-center justify-center max-w-6xl px-4 pt-16 md:px-6 md:pt-0 lg:px-8">
+	<div class="h-full w-full overflow-y-auto pt-56 md:overflow-y-hidden md:pt-0">
+		<div
+			class="mx-auto flex h-full max-w-6xl items-center justify-center px-4 pt-16 md:px-6 md:pt-0 lg:px-8"
+		>
 			<!-- Close Button -->
 			<div class="bg-white/2 fixed right-0 top-0 z-50 mt-4 w-full p-4 pt-14 backdrop-blur-sm">
 				<div class="mx-auto max-w-6xl">
@@ -126,22 +128,24 @@
 				</div>
 			</div>
 
-			<div class="flex h-fit gap-4 md:mt-6 flex-col md:justify-center md:items-center md:flex-row md:gap-8 md:pt-8 lg:gap-12">
-				<!-- Image Section - Improved Layout -->
+			<div
+				class="flex h-full min-h-screen flex-col gap-4 p-4 md:mt-6 md:min-h-0 md:flex-row md:items-start md:justify-center md:gap-8 md:pt-8 lg:gap-12"
+			>
+				<!-- Image Section - With Padding -->
 				<div
-					class="flex md:place-self-start items-center md:w-1/2 justify-center rounded-lg md:shadow-sm"
+					class="flex h-96 w-full items-center justify-center rounded-lg bg-white p-6 pt-12 md:h-[32rem] md:w-1/2 md:place-self-start md:shadow-sm"
 				>
-					<div class="relative h-full w-full">
+					<div class="relative flex h-full w-full items-center justify-center">
 						<img
 							src={product.image ? product.image.replace('../', '/') : '/images/placeholder.jpg'}
 							alt={product.title}
-							class="h-full w-full object-contain"
+							class="max-h-full max-w-full object-contain"
 						/>
 					</div>
 				</div>
 
 				<!-- Product Details Section -->
-				<div class="flex flex-col justify-center md:w-1/2 space-y-4 pb-8 md:pb-0">
+				<div class="flex w-full flex-col justify-start space-y-4 pb-8 pt-12 md:w-1/2 md:pb-0">
 					<h1 class="text-xl font-semibold text-gray-800 sm:text-2xl lg:text-3xl">
 						<i>{product.title}</i>
 					</h1>
@@ -164,7 +168,6 @@
 							</p>
 						</div>
 
-						<!-- Quantity Selector -->
 						<div class="flex items-center gap-4">
 							<button
 								on:click={decrement}
@@ -183,7 +186,6 @@
 							</button>
 						</div>
 
-						<!-- Add to Cart Button -->
 						<div>
 							<button
 								on:click={handleAddToCart}
