@@ -189,7 +189,7 @@
 	<main class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-16 lg:py-10">
 		<h1 class="mb-6 mt-16 text-xl font-medium font-semibold sm:mb-8 sm:text-2xl">Checkout</h1>
 
-		<!-- Progress Steps - More compact on mobile -->
+		<!-- Progress Steps -->
 		<div class="flex flex-col gap-8 lg:flex-row">
 			<div class="flex-1">
 				<div class="mb-6 flex items-center text-sm sm:mb-8 sm:text-base">
@@ -207,7 +207,7 @@
 				{/if}
 
 				<form on:submit|preventDefault={handleSubmit} class="space-y-4 sm:space-y-6">
-					<!-- Name Fields - Stack on mobile -->
+					<!-- Name Fields -->
 					<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
 						<input
 							type="text"
@@ -239,7 +239,7 @@
 						class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-black focus:ring-2 focus:ring-black/10 sm:text-base"
 					/>
 
-					<!-- Location Fields - Stack on mobile -->
+					<!-- Location Fields -->
 					<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
 						<select
 							bind:value={city}
@@ -303,7 +303,7 @@
 				</form>
 			</div>
 
-			<!-- Cart Summary - Full width on mobile -->
+			<!-- Cart Summary -->
 			<div class="mt-8 w-full bg-gray-50 p-4 lg:mt-0 lg:w-[400px] lg:bg-transparent lg:p-6">
 				<h2 class="mb-6 text-xl font-semibold sm:text-2xl">Your Cart</h2>
 				<div class="space-y-4">
