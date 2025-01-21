@@ -111,12 +111,12 @@
 </script>
 
 <div class="fixed inset-0">
-	<div class="h-full w-full overflow-y-auto pt-56 md:overflow-y-hidden md:pt-0">
+	<div class="h-full w-full overflow-y-auto pt-28 md:overflow-y-hidden md:pt-0">
 		<div
-			class="mx-auto flex h-full max-w-6xl items-center justify-center px-4 pt-16 md:px-6 md:pt-0 lg:px-8"
+			class="mx-auto flex h-full max-w-6xl items-center justify-center px-4 pt-8 md:px-6 md:py-12 lg:px-8"
 		>
 			<!-- Close Button -->
-			<div class="bg-white/2 fixed right-0 top-0 z-50 mt-4 w-full p-4 pt-14 backdrop-blur-sm">
+			<div class="bg-white/2 fixed right-0 top-0 z-50 mt-4 w-full p-4 pt-12 backdrop-blur-sm">
 				<div class="mx-auto max-w-6xl">
 					<button
 						on:click={() => (window.location.href = '/client/shop')}
@@ -129,13 +129,13 @@
 			</div>
 
 			<div
-				class="flex h-full min-h-screen flex-col gap-4 p-4 md:mt-6 md:min-h-0 md:flex-row md:items-start md:justify-center md:gap-8 md:pt-8 lg:gap-12"
+				class="flex h-full min-h-screen flex-col gap-4 p-4 md:min-h-0 md:flex-row md:items-start md:justify-center md:gap-8 md:pb-12 lg:gap-12"
 			>
 				<!-- Image Section - With Padding -->
 				<div
-					class="flex h-96 w-full items-center justify-center rounded-lg bg-white p-6 pt-12 md:h-[32rem] md:w-1/2 md:place-self-start md:shadow-sm"
+					class="flex h-72 w-full items-center justify-center rounded-lg bg-white p-4 md:h-[28rem] md:w-1/2 md:place-self-start md:p-6 md:shadow-sm"
 				>
-					<div class="relative flex h-full w-full items-center justify-center">
+					<div class="relative mt-16 flex h-full w-full items-center justify-center">
 						<img
 							src={product.image ? product.image.replace('../', '/') : '/images/placeholder.jpg'}
 							alt={product.title}
@@ -145,7 +145,7 @@
 				</div>
 
 				<!-- Product Details Section -->
-				<div class="flex w-full flex-col justify-start space-y-4 pb-8 pt-12 md:w-1/2 md:pb-0">
+				<div class="flex w-full flex-col justify-start space-y-4 pb-12 pt-12 md:w-1/2 md:pb-0">
 					<h1 class="text-xl font-semibold text-gray-800 sm:text-2xl lg:text-3xl">
 						<i>{product.title}</i>
 					</h1>
