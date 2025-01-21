@@ -23,8 +23,10 @@
 		{ id: 'ewallet', label: 'E-Wallet', icon: '/images/ewallet.png', type: 'qr' }
 	];
 
-	// QR code URL updated to the public static folder
 	const qrCodeUrl = '/images/qr-code.png';
+
+	$: hasFreeShipping = $checkoutStore.shipping?.price === 0;
+	$: originalShippingPrice = $checkoutStore.shipping?.originalPrice;
 
 	onMount(async () => {
 		try {
@@ -64,8 +66,8 @@
 	}
 
 	function calculateTotal() {
-		const shipping = $checkoutStore.shipping?.price || 20000;
-		return subtotal + shipping;
+		const shippingCost = hasFreeShipping ? 0 : ($checkoutStore.shipping?.price || 20000);
+		return subtotal + shippingCost;
 	}
 
 	function validateForm() {
@@ -119,8 +121,9 @@
 				cartItems,
 				total: calculateTotal(),
 				shippingAddress: $checkoutStore.address,
-				shippingPrice: $checkoutStore.shipping?.price || 20000,
-				shippingMethod: paymentMethod
+				shippingPrice: hasFreeShipping ? 0 : ($checkoutStore.shipping?.price || 20000),
+				shippingMethod: paymentMethod,
+				couponApplied: hasFreeShipping
 			};
 
 			const response = await axios.post('/api/checkout/payment', paymentData, {
@@ -285,7 +288,18 @@
 				</div>
 				<div class="flex justify-between text-gray-600">
 					<span>Shipping</span>
-					<span>Rp {($checkoutStore.shipping?.price || 20000).toLocaleString()}</span>
+					{#if hasFreeShipping}
+						<div>
+							<span class="text-green-600">FREE</span>
+							{#if originalShippingPrice}
+								<span class="ml-2 text-xs line-through">
+									Rp {originalShippingPrice.toLocaleString()}
+								</span>
+							{/if}
+						</div>
+					{:else}
+						<span>Rp {($checkoutStore.shipping?.price || 20000).toLocaleString()}</span>
+					{/if}
 				</div>
 				<hr class="my-2" />
 				<div class="flex justify-between text-lg font-bold">

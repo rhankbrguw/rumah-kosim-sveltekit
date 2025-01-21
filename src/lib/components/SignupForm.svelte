@@ -19,7 +19,7 @@
 	}
 </script>
 
-<div class="mt-20 mx-auto w-96 rounded bg-white px-4 py-6 shadow-md">
+<div class="mx-auto mt-20 w-96 rounded bg-white px-4 py-6 shadow-md">
 	<h2 class="mb-8 p-0 text-2xl font-bold">Sign Up</h2>
 	<form on:submit|preventDefault={handleSubmit}>
 		{#if error}

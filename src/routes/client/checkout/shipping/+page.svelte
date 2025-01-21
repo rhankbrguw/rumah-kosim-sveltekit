@@ -7,6 +7,8 @@
 	let selectedShipping = '';
 	let cartItems = [];
 	let subtotal = 0;
+	let couponCode = '';
+	let isValidCoupon = false;
 
 	const shippingOptions = [
 		{
@@ -35,14 +37,45 @@
 
 	function handleShippingSelect(option) {
 		selectedShipping = option.id;
-		checkoutStore.setShipping(option);
+		checkoutStore.setShipping({
+			...option,
+			price: isValidCoupon ? 0 : option.price // Apply free shipping if valid coupon
+		});
+	}
+
+	function validateCoupon(code) {
+		// Check for the specific promotional code from the modal
+		isValidCoupon = code.toUpperCase() === 'XYZPROMOSHIPPING';
+
+		// If shipping is already selected, update it with free shipping
+		if (isValidCoupon && selectedShipping) {
+			const currentShipping = shippingOptions.find((opt) => opt.id === selectedShipping);
+			checkoutStore.setShipping({
+				...currentShipping,
+				price: 0
+			});
+		}
+
+		return isValidCoupon;
+	}
+
+	function handleCouponSubmit() {
+		if (validateCoupon(couponCode)) {
+			// Update the total if shipping is already selected
+			if (selectedShipping) {
+				calculateTotal();
+			}
+		} else {
+			alert('Invalid coupon code');
+			couponCode = '';
+		}
 	}
 
 	function calculateTotal() {
 		const shipping = selectedShipping
 			? shippingOptions.find((opt) => opt.id === selectedShipping).price
 			: 0;
-		return subtotal + shipping;
+		return subtotal + (isValidCoupon ? 0 : shipping);
 	}
 
 	async function handleContinue() {
@@ -55,8 +88,8 @@
 </script>
 
 <div class="mx-auto mt-20 max-w-5xl px-4 py-6 sm:px-8">
-	<!-- Checkout content -->
 	<div class="grid grid-cols-1 gap-8 lg:grid-cols-[1fr,auto] lg:gap-16">
+		<!-- Left column -->
 		<div>
 			<h1 class="mb-6 text-xl font-semibold sm:text-2xl">Checkout</h1>
 
@@ -76,18 +109,28 @@
 						class="block cursor-pointer rounded-lg border p-3 hover:border-black sm:p-4
             {selectedShipping === option.id ? 'border-black' : 'border-gray-200'}"
 					>
-						<div class="flex items-center">
-							<input
-								type="radio"
-								name="shipping"
-								value={option.id}
-								bind:group={selectedShipping}
-								on:change={() => handleShippingSelect(option)}
-								class="mr-3"
-							/>
-							<div>
-								<div class="text-sm font-medium sm:text-base">{option.label}</div>
-								<div class="text-xs text-gray-500 sm:text-sm">{option.duration}</div>
+						<div class="flex items-center justify-between">
+							<div class="flex items-center">
+								<input
+									type="radio"
+									name="shipping"
+									value={option.id}
+									bind:group={selectedShipping}
+									on:change={() => handleShippingSelect(option)}
+									class="mr-3"
+								/>
+								<div>
+									<div class="text-sm font-medium sm:text-base">{option.label}</div>
+									<div class="text-xs text-gray-500 sm:text-sm">{option.duration}</div>
+								</div>
+							</div>
+							<div class="text-sm font-medium">
+								{#if isValidCoupon}
+									<span class="text-green-600">FREE</span>
+									<span class="ml-2 text-xs line-through">Rp {option.price.toLocaleString()}</span>
+								{:else}
+									Rp {option.price.toLocaleString()}
+								{/if}
 							</div>
 						</div>
 					</label>
@@ -105,6 +148,7 @@
 		<!-- Order summary -->
 		<div class="w-full lg:w-80">
 			<h2 class="-mt-2 mb-4 text-xl font-semibold sm:text-2xl">Your Cart</h2>
+			<!-- Cart items -->
 			<div class="mt-8 space-y-4">
 				{#each cartItems as item}
 					<div class="flex gap-3 sm:gap-4">
@@ -126,11 +170,25 @@
 			</div>
 
 			<!-- Coupon -->
-			<input
-				type="text"
-				placeholder="Enter coupon code here"
-				class="mt-6 w-full rounded-lg border p-2 text-sm sm:text-base"
-			/>
+			<div class="mt-6 space-y-2">
+				<div class="flex gap-2">
+					<input
+						type="text"
+						bind:value={couponCode}
+						placeholder="Enter coupon code here"
+						class="flex-1 rounded-lg border p-2 text-sm sm:text-base"
+					/>
+					<button
+						on:click={handleCouponSubmit}
+						class="rounded-lg bg-amber-400 px-4 py-2 text-sm text-white hover:bg-amber-500 sm:text-base"
+					>
+						Apply
+					</button>
+				</div>
+				{#if isValidCoupon}
+					<p class="text-sm text-green-600">Free shipping coupon applied!</p>
+				{/if}
+			</div>
 
 			<!-- Totals -->
 			<div class="mt-4 space-y-2 text-sm sm:text-base">
@@ -144,7 +202,18 @@
 					<div class="flex justify-between">
 						<span class="text-gray-600">Shipping</span>
 						<span>
-							Rp {shippingOptions.find((opt) => opt.id === selectedShipping).price.toLocaleString()}
+							{#if isValidCoupon}
+								<span class="text-green-600">FREE</span>
+								<span class="ml-2 text-xs line-through">
+									Rp {shippingOptions
+										.find((opt) => opt.id === selectedShipping)
+										.price.toLocaleString()}
+								</span>
+							{:else}
+								Rp {shippingOptions
+									.find((opt) => opt.id === selectedShipping)
+									.price.toLocaleString()}
+							{/if}
 						</span>
 					</div>
 				{/if}

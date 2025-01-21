@@ -1,9 +1,30 @@
 <script>
 	import { goto } from '$app/navigation';
 	import { Search } from 'lucide-svelte';
+	import { X } from 'lucide-svelte';
+	import { onMount } from 'svelte';
+	import { fade } from 'svelte/transition';
+	import { auth } from '$lib/stores/auth';
 
 	export let books = [];
 	let searchTerm = '';
+	let showModal = false;
+
+	onMount(() => {
+		// Show modal only for non-admin users and check user-specific flag
+		if ($auth.isAuthenticated && !$auth.isAdmin) {
+			const userId = $auth.user?.id;
+			const hasSeenModal = localStorage.getItem(`hasSeenShippingModal_${userId}`);
+			if (!hasSeenModal) {
+				showModal = true;
+				localStorage.setItem(`hasSeenShippingModal_${userId}`, 'true');
+			}
+		}
+	});
+
+	function closeModal() {
+		showModal = false;
+	}
 
 	function formatRupiah(price) {
 		return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(price);
@@ -19,6 +40,36 @@
 			book.description.toLowerCase().includes(searchTerm.toLowerCase())
 	);
 </script>
+
+<!-- Modal -->
+{#if showModal}
+	<div
+		class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md"
+		transition:fade={{ duration: 150 }}
+		on:click={closeModal}
+	>
+		<div
+			class="relative w-[90%] max-w-xl rounded-xl bg-white p-2 shadow-[8px_8px_25px_rgba(0,0,0,0.1),-8px_-8px_25px_rgba(0,0,0,0.05)] sm:w-auto"
+			on:click|stopPropagation
+		>
+			<!-- Close Button -->
+			<button
+				class="absolute -right-5 -top-5 z-50 rounded-full bg-red-500 p-3 text-white shadow-lg transition-transform duration-200 hover:scale-110 hover:bg-red-600"
+				on:click={closeModal}
+				aria-label="Close modal"
+			>
+				<X size={24} />
+			</button>
+
+			<!-- Banner Image -->
+			<img
+				src="/src/lib/assets/image/banner-5.png"
+				alt="Free Shipping Promo"
+				class="w-full object-cover transition-transform duration-500 hover:scale-105"
+			/>
+		</div>
+	</div>
+{/if}
 
 <section class="mt-16 p-4 sm:mt-20 sm:p-24 sm:px-4 sm:py-4">
 	<!-- Search input -->

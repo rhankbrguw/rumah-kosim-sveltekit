@@ -7,7 +7,8 @@ const createCheckoutStore = () => {
 		shipping: null,
 		payment: '',
 		loading: false,
-		error: null
+		error: null,
+		coupon: null
 	});
 
 	return {
@@ -15,6 +16,7 @@ const createCheckoutStore = () => {
 		setAddress: (address) => update((store) => ({ ...store, address })),
 		setShipping: (shipping) => update((store) => ({ ...store, shipping })),
 		setPayment: (payment) => update((store) => ({ ...store, payment })),
+		setCoupon: (coupon) => update((store) => ({ ...store, coupon })),
 		async getUserAddress() {
 			try {
 				const token = localStorage.getItem('authToken');
@@ -49,7 +51,15 @@ const createCheckoutStore = () => {
 				update((store) => ({ ...store, error: error.message }));
 			}
 		},
-		reset: () => set({ address: '', shipping: '', payment: '', loading: false, error: null })
+		reset: () =>
+			set({
+				address: '',
+				shipping: null,
+				payment: '',
+				loading: false,
+				error: null,
+				coupon: null
+			})
 	};
 };
 
