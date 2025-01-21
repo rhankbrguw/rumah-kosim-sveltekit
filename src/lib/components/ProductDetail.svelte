@@ -110,9 +110,9 @@
 	});
 </script>
 
-<div class="fixed inset-0 bg-white">
-	<div class="h-full w-full overflow-y-auto md:overflow-y-hidden">
-		<div class="mx-auto h-full max-w-6xl px-4 pt-16 md:px-6 md:pt-0 lg:px-8">
+<div class="fixed inset-0">
+	<div class="h-full w-full pt-56 md:pt-0 overflow-y-auto md:overflow-y-hidden">
+		<div class="mx-auto h-full flex items-center justify-center max-w-6xl px-4 pt-16 md:px-6 md:pt-0 lg:px-8">
 			<!-- Close Button -->
 			<div class="bg-white/2 fixed right-0 top-0 z-50 mt-4 w-full p-4 pt-14 backdrop-blur-sm">
 				<div class="mx-auto max-w-6xl">
@@ -126,10 +126,10 @@
 				</div>
 			</div>
 
-			<div class="grid h-full grid-cols-1 gap-4 md:mt-6 md:grid-cols-2 md:gap-8 md:pt-8 lg:gap-12">
+			<div class="flex h-fit gap-4 md:mt-6 flex-col md:justify-center md:items-center md:flex-row md:gap-8 md:pt-8 lg:gap-12">
 				<!-- Image Section - Improved Layout -->
 				<div
-					class="flex h-[400px] items-center justify-center rounded-lg bg-white p-6 md:mt-8 md:h-[500px] md:shadow-sm"
+					class="flex md:place-self-start items-center md:w-1/2 justify-center rounded-lg md:shadow-sm"
 				>
 					<div class="relative h-full w-full">
 						<img
@@ -141,7 +141,7 @@
 				</div>
 
 				<!-- Product Details Section -->
-				<div class="flex flex-col justify-center space-y-4 pb-8 md:pb-0">
+				<div class="flex flex-col justify-center md:w-1/2 space-y-4 pb-8 md:pb-0">
 					<h1 class="text-xl font-semibold text-gray-800 sm:text-2xl lg:text-3xl">
 						<i>{product.title}</i>
 					</h1>
