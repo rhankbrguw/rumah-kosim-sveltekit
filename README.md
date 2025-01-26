@@ -12,7 +12,7 @@ A full-stack web application for managing books, built with **SvelteKit**, featu
 
 ### **Backend**
 
-- **SvelteKit APIi Routes**
+- **SvelteKit API Routes**
 - **JWT** - JSON Web Tokens for secure authentication
 - **bcrypt** - Password hashing
 - **MySQL2** - Database connector and query builder
