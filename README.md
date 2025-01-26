@@ -119,9 +119,12 @@ This project is **not under any license** and is created solely for academic pur
 ## 📞 Contact
 
 - **Instagram** : [@rhankbrguw\_](https://www.instagram.com/rhankbrguw_)
-- **Facebook** : [Samael](https://www.facebook.com/Rhakbr/)
-- **LinkedIn** : [Raihan Akbar](https://www.linkedin.com/in/raihan-akbar-2b5820334/)
-- **GitHub** : [@Samaele13](https://github.com/Samaele13)
+                  [@ansyrllhv](https://www.instagram.com/ansyrllhv/)
+- **Facebook**  : [Samael](https://www.facebook.com/Rhakbr/)
+- **LinkedIn**  : [Raihan Akbar](https://www.linkedin.com/in/raihan-akbar-2b5820334/)
+                  [Ansya Rulloh Vini](https://www.linkedin.com/in/ansya-rulloh-vini-2414302a1/)
+- **GitHub**    : [@Samaele13](https://github.com/Samaele13)
+                  [@ansyarulloh](https://github.com/ansyarulloh)
 
 ## 🌟 Project Link
 
