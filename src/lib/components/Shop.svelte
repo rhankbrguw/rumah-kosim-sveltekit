@@ -93,7 +93,10 @@
 			<div
 				class="flex h-full flex-col rounded-lg border p-2 shadow-lg transition-transform duration-300 hover:scale-105 hover:shadow-xl sm:p-4"
 			>
-				<div class="mb-2 aspect-[3/4] w-full sm:mb-4 sm:h-64">
+				<div
+					class="mb-2 aspect-[3/4] w-full cursor-pointer sm:mb-4 sm:h-64"
+					on:click={() => goToProduct(book.id)}
+				>
 					<img
 						src={book.image}
 						alt={book.title}
