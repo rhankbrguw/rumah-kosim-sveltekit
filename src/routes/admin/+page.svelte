@@ -557,7 +557,6 @@
 		{#if showAddModal}
 			<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 pb-6 pt-24">
 				<div class="w-full max-w-[400px] rounded-lg bg-white p-4 sm:p-5">
-					>
 					<div class="mb-4 flex items-center justify-between">
 						<h2 class="text-lg font-semibold text-gray-800">Add Product</h2>
 						<button
