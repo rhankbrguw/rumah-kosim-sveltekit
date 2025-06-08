@@ -272,11 +272,7 @@
 <div class="min-h-screen bg-[#F8F9FA]">
 	<div class="container mx-auto px-4 py-4 sm:px-8 sm:py-8">
 		<!-- Logo header -->
-		<div class="mb-6 mt-16 sm:mb-8 sm:mt-20">
-			<h1 class="text-xl font-bold sm:text-2xl">
-				Kosim<span class="text-[#FF5C00]">Book</span> Admin
-			</h1>
-		</div>
+		<div class="mb-6 mt-16 sm:mb-8 sm:mt-20"></div>
 
 		<!-- Tab buttons with updated styling -->
 		<div class="mb-4 flex gap-2 sm:mb-6">
