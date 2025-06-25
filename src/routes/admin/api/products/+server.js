@@ -1,21 +1,6 @@
 import { json } from '@sveltejs/kit';
-import { query } from '$lib/db';
-import jwt from 'jsonwebtoken';
-
-async function checkAdmin(request) {
-	try {
-		const authHeader = request.headers.get('Authorization');
-		if (!authHeader || !authHeader.startsWith('Bearer ')) {
-			return false;
-		}
-		const token = authHeader.split(' ')[1];
-		const decoded = jwt.verify(token, process.env.JWT_SECRET);
-		return decoded && decoded.role === 'admin';
-	} catch (error) {
-		console.error('Admin check error:', error);
-		return false;
-	}
-}
+import { query } from '$lib/db.js';
+import { checkAdmin } from '$lib/server/admin-guard.js';
 
 export async function GET({ request }) {
 	if (!(await checkAdmin(request))) {
@@ -40,17 +25,6 @@ export async function POST({ request }) {
 		const data = await request.json();
 		const { title, price, image, description, quantity } = data;
 
-		// Log received data and its types
-		console.log('Data types:', {
-			title: typeof title,
-			description: typeof description,
-			price: typeof price,
-			quantity: typeof quantity,
-			image: typeof image,
-			descriptionLength: description?.length
-		});
-
-		// Validate required fields
 		if (!title?.trim()) {
 			return json({ success: false, message: 'Title is required' }, { status: 400 });
 		}
@@ -66,8 +40,6 @@ export async function POST({ request }) {
 		if (!quantity || isNaN(Number(quantity)) || Number(quantity) < 0) {
 			return json({ success: false, message: 'Valid quantity is required' }, { status: 400 });
 		}
-
-		// Check description length against VARCHAR(255) limit
 		if (description.length > 255) {
 			return json(
 				{
@@ -96,12 +68,6 @@ export async function POST({ request }) {
 				message: 'Product added successfully'
 			});
 		} catch (dbError) {
-			console.error('Database error:', {
-				code: dbError.code,
-				message: dbError.message,
-				sqlMessage: dbError.sqlMessage
-			});
-
 			if (dbError.code === 'ER_DUP_ENTRY') {
 				return json(
 					{
@@ -111,7 +77,6 @@ export async function POST({ request }) {
 					{ status: 400 }
 				);
 			}
-
 			if (dbError.code === 'ER_DATA_TOO_LONG') {
 				return json(
 					{
@@ -121,16 +86,10 @@ export async function POST({ request }) {
 					{ status: 400 }
 				);
 			}
-
-			throw dbError; // Re-throw for general error handling
+			throw dbError;
 		}
 	} catch (error) {
-		console.error('POST product error:', {
-			error: error,
-			message: error.message,
-			stack: error.stack
-		});
-
+		console.error('POST product error:', error);
 		return json(
 			{
 				success: false,

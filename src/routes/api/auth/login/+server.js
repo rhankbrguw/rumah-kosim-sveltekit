@@ -1,67 +1,41 @@
-import mysql from 'mysql2/promise';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { json } from '@sveltejs/kit';
-import 'dotenv/config';
+import { query } from '$lib/db.js';
+import { JWT_SECRET, JWT_EXPIRATION } from '$env/static/private';
 
 export async function POST({ request }) {
-	try {
-		const { username, password } = await request.json();
+  try {
+    const { username, password } = await request.json();
 
-		if (!username || !password) {
-			return json({ error: 'Missing required fields' }, { status: 400 });
-		}
+    if (!username || !password) {
+      return json({ error: 'Missing required fields' }, { status: 400 });
+    }
 
-		const connection = await mysql.createConnection({
-			host: process.env.DB_HOST,
-			user: process.env.DB_USER,
-			password: process.env.DB_PASSWORD,
-			database: process.env.DB_NAME
-		});
+    const sql = 'SELECT id, username, password, email, role FROM users WHERE username = ?';
+    const rows = await query(sql, [username]);
 
-		// Fetch user from the database with role
-		const [rows] = await connection.execute(
-			'SELECT id, username, password, email, role FROM users WHERE username = ?',
-			[username]
-		);
+    if (rows.length === 0) {
+      return json({ error: 'Invalid username or password' }, { status: 401 });
+    }
 
-		if (rows.length === 0) {
-			await connection.end();
-			return json({ error: 'Invalid username or password' }, { status: 401 });
-		}
+    const user = rows[0];
 
-		const user = rows[0];
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return json({ error: 'Invalid username or password' }, { status: 401 });
+    }
 
-		const isPasswordValid = await bcrypt.compare(password, user.password);
-		if (!isPasswordValid) {
-			await connection.end();
-			return json({ error: 'Invalid username or password' }, { status: 401 });
-		}
+    const payload = { id: user.id, username: user.username, email: user.email, role: user.role };
+    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRATION });
 
-		// Generate JWT with role
-		const payload = {
-			id: user.id,
-			username: user.username,
-			email: user.email,
-			role: user.role
-		};
-		const token = jwt.sign(payload, process.env.JWT_SECRET, {
-			expiresIn: process.env.JWT_EXPIRATION
-		});
-
-		await connection.end();
-
-		return json({
-			success: true,
-			token,
-			user: {
-				username: user.username,
-				email: user.email,
-				role: user.role
-			}
-		});
-	} catch (error) {
-		console.error('Error during login:', error);
-		return json({ error: 'Internal server error' }, { status: 500 });
-	}
+    return json({
+      success: true,
+      token,
+      user: { username: user.username, email: user.email, role: user.role }
+    });
+  } catch (error) {
+    console.error('Error during login:', error);
+    return json({ error: 'Internal server error' }, { status: 500 });
+  }
 }

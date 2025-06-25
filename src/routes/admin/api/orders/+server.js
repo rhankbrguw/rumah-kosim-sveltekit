@@ -1,20 +1,6 @@
 import { json } from '@sveltejs/kit';
-import { query } from '$lib/db';
-import jwt from 'jsonwebtoken';
-
-async function checkAdmin(request) {
-	try {
-		const authHeader = request.headers.get('Authorization');
-		if (!authHeader || !authHeader.startsWith('Bearer ')) {
-			return false;
-		}
-		const token = authHeader.split(' ')[1];
-		const decoded = jwt.verify(token, process.env.JWT_SECRET);
-		return decoded && decoded.role === 'admin';
-	} catch (error) {
-		return false;
-	}
-}
+import { query } from '$lib/db.js';
+import { checkAdmin } from '$lib/server/admin-guard.js';
 
 export async function GET({ request }) {
 	if (!(await checkAdmin(request))) {
@@ -23,7 +9,7 @@ export async function GET({ request }) {
 
 	try {
 		const orders = await query(`
-            SELECT 
+            SELECT
                 o.id,
                 p.title,
                 u.username,

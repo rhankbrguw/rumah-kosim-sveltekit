@@ -2,7 +2,6 @@ import { json } from '@sveltejs/kit';
 import { writeFile, mkdir } from 'fs/promises';
 import { join, dirname } from 'path';
 
-// Helper function to ensure directory exists
 async function ensureDir(dirPath) {
 	try {
 		await mkdir(dirPath, { recursive: true });

@@ -1,20 +1,6 @@
 import { json } from '@sveltejs/kit';
-import { query } from '$lib/db';
-import jwt from 'jsonwebtoken';
-
-async function checkAdmin(request) {
-	try {
-		const authHeader = request.headers.get('Authorization');
-		if (!authHeader || !authHeader.startsWith('Bearer ')) {
-			return false;
-		}
-		const token = authHeader.split(' ')[1];
-		const decoded = jwt.verify(token, process.env.JWT_SECRET);
-		return decoded && decoded.role === 'admin';
-	} catch (error) {
-		return false;
-	}
-}
+import { query } from '$lib/db.js';
+import { checkAdmin } from '$lib/server/admin-guard.js';
 
 export async function PATCH({ request }) {
 	if (!(await checkAdmin(request))) {
@@ -28,7 +14,6 @@ export async function PATCH({ request }) {
 			return json({ success: false, message: 'Missing required fields' }, { status: 400 });
 		}
 
-		// Update the stock in the database
 		await query('UPDATE products SET quantity = ? WHERE id = ?', [quantity, productId]);
 
 		return json({ success: true });

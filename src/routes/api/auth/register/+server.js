@@ -1,8 +1,8 @@
-import mysql from 'mysql2/promise';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { json } from '@sveltejs/kit';
-import 'dotenv/config';
+import { query } from '$lib/db.js';
+import { JWT_SECRET, JWT_EXPIRATION } from '$env/static/private';
 
 export async function POST({ request }) {
 	try {
@@ -14,24 +14,13 @@ export async function POST({ request }) {
 
 		const hashedPassword = await bcrypt.hash(password, 10);
 
-		const connection = await mysql.createConnection({
-			host: process.env.DB_HOST,
-			user: process.env.DB_USER,
-			password: process.env.DB_PASSWORD,
-			database: process.env.DB_NAME
-		});
+		const sql = `INSERT INTO users (username, password, email) VALUES (?, ?, ?)`;
+		await query(sql, [username, hashedPassword, email]);
 
-		// Insert user into database
-		const query = `INSERT INTO users (username, password, email) VALUES (?, ?, ?)`;
-		await connection.execute(query, [username, hashedPassword, email]);
-
-		// Generate a JWT
 		const payload = { username, email };
-		const token = jwt.sign(payload, process.env.JWT_SECRET, {
-			expiresIn: process.env.JWT_EXPIRATION
+		const token = jwt.sign(payload, JWT_SECRET, {
+			expiresIn: JWT_EXPIRATION
 		});
-
-		await connection.end();
 
 		return json({ success: true, token });
 	} catch (error) {
