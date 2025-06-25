@@ -1,15 +1,7 @@
 import { json } from '@sveltejs/kit';
-import mysql from 'mysql2/promise';
+import { pool } from '$lib/db.js';
 import jwt from 'jsonwebtoken';
-
-const getConnection = async () => {
-	return mysql.createConnection({
-		host: process.env.DB_HOST,
-		user: process.env.DB_USER,
-		password: process.env.DB_PASSWORD,
-		database: process.env.DB_NAME
-	});
-};
+import { JWT_SECRET } from '$env/static/private';
 
 function generateTrackingNumber() {
 	const prefix = 'RK';
@@ -20,7 +12,6 @@ function generateTrackingNumber() {
 	return `${prefix}${timestamp}${random}`;
 }
 
-/** @type {import('./$types').RequestHandler} */
 export async function POST({ request }) {
 	let connection;
 	try {
@@ -33,7 +24,7 @@ export async function POST({ request }) {
 
 		let userId;
 		try {
-			const decoded = jwt.verify(token, process.env.JWT_SECRET);
+			const decoded = jwt.verify(token, JWT_SECRET);
 			userId = decoded.id;
 		} catch (err) {
 			return json({ error: 'Invalid token' }, { status: 401 });
@@ -50,13 +41,12 @@ export async function POST({ request }) {
 			return json({ error: 'Shipping address and method are required' }, { status: 400 });
 		}
 
-		connection = await getConnection();
+		connection = await pool.getConnection();
 		await connection.beginTransaction();
 
 		try {
 			const trackingNumber = generateTrackingNumber();
 
-			// Create the order with all required fields
 			const [orderResult] = await connection.execute(
 				`INSERT INTO orders (
                     user_id, total, shipping_address, shipping_price,
@@ -67,7 +57,6 @@ export async function POST({ request }) {
 
 			const orderId = orderResult.insertId;
 
-			// Insert order items without updating product quantities
 			for (const item of cartItems) {
 				await connection.execute(
 					'INSERT INTO order_items (order_id, product_id, quantity, price_at_time) VALUES (?, ?, ?, ?)',
@@ -75,7 +64,6 @@ export async function POST({ request }) {
 				);
 			}
 
-			// Clear the user's cart
 			await connection.execute('DELETE FROM cart WHERE user_id = ?', [userId]);
 
 			await connection.commit();
@@ -102,7 +90,7 @@ export async function POST({ request }) {
 		);
 	} finally {
 		if (connection) {
-			await connection.end();
+			connection.release();
 		}
 	}
 }

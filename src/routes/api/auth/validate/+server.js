@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { json } from '@sveltejs/kit';
-import 'dotenv/config';
+import { JWT_SECRET } from '$env/static/private';
 
 export async function POST({ request }) {
 	try {
@@ -9,7 +9,7 @@ export async function POST({ request }) {
 			return json({ error: 'Token is missing' }, { status: 400 });
 		}
 
-		const payload = jwt.verify(token, process.env.JWT_SECRET);
+		const payload = jwt.verify(token, JWT_SECRET);
 		return json({
 			success: true,
 			user: {

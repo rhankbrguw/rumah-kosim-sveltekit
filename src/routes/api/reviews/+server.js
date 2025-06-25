@@ -1,17 +1,10 @@
 import { json } from '@sveltejs/kit';
-import mysql from 'mysql2/promise';
+import { query, pool } from '$lib/db.js';
 import jwt from 'jsonwebtoken';
-
-const pool = mysql.createPool({
-	host: process.env.DB_HOST,
-	user: process.env.DB_USER,
-	password: process.env.DB_PASSWORD,
-	database: process.env.DB_NAME,
-	waitForConnections: true,
-	connectionLimit: 10
-});
+import { JWT_SECRET } from '$env/static/private';
 
 export async function POST({ request }) {
+	let conn;
 	try {
 		const authHeader = request.headers.get('Authorization');
 		if (!authHeader?.startsWith('Bearer ')) {
@@ -22,7 +15,7 @@ export async function POST({ request }) {
 		let userId;
 
 		try {
-			const decoded = jwt.verify(token, process.env.JWT_SECRET);
+			const decoded = jwt.verify(token, JWT_SECRET);
 			userId = decoded.id;
 		} catch (err) {
 			return json({ error: 'Invalid token' }, { status: 401 });
@@ -39,12 +32,11 @@ export async function POST({ request }) {
 			return json({ error: 'Rating must be between 1 and 5' }, { status: 400 });
 		}
 
-		const conn = await pool.getConnection();
+		conn = await pool.getConnection();
 
 		try {
 			await conn.beginTransaction();
 
-			// Verify order exists and belongs to user
 			const [orders] = await conn.execute('SELECT id FROM orders WHERE id = ? AND user_id = ?', [
 				orderId,
 				userId
@@ -55,7 +47,6 @@ export async function POST({ request }) {
 				return json({ error: 'Order not found' }, { status: 404 });
 			}
 
-			// Check if review already exists
 			const [existingReviews] = await conn.execute(
 				'SELECT id FROM reviews WHERE order_id = ? AND product_id = ? AND user_id = ?',
 				[orderId, productId, userId]
@@ -66,9 +57,8 @@ export async function POST({ request }) {
 				return json({ error: 'Review already exists' }, { status: 400 });
 			}
 
-			// Create the review
 			const [result] = await conn.execute(
-				`INSERT INTO reviews (order_id, product_id, user_id, rating, comment) 
+				`INSERT INTO reviews (order_id, product_id, user_id, rating, comment)
          VALUES (?, ?, ?, ?, ?)`,
 				[orderId, productId, userId, rating, comment]
 			);
@@ -97,31 +87,20 @@ export async function GET({ request }) {
 		let userId;
 
 		try {
-			const decoded = jwt.verify(token, process.env.JWT_SECRET);
+			const decoded = jwt.verify(token, JWT_SECRET);
 			userId = decoded.id;
 		} catch (err) {
 			return json({ error: 'Invalid token' }, { status: 401 });
 		}
 
-		const conn = await pool.getConnection();
+		const sql = `
+            SELECT r.*, p.title as product_title
+            FROM reviews r
+            JOIN products p ON r.product_id = p.id
+            WHERE r.user_id = ?`;
+		const reviews = await query(sql, [userId]);
 
-		try {
-			// Fetch all reviews for the user
-			const [reviews] = await conn.execute(
-				`SELECT r.*, p.title as product_title 
-                 FROM reviews r 
-                 JOIN products p ON r.product_id = p.id 
-                 WHERE r.user_id = ?`,
-				[userId]
-			);
-
-			return json(reviews);
-		} catch (err) {
-			console.error('Database error:', err);
-			return json({ error: 'Failed to fetch reviews' }, { status: 500 });
-		} finally {
-			conn.release();
-		}
+		return json(reviews);
 	} catch (err) {
 		console.error('Server error:', err);
 		return json({ error: 'Internal server error' }, { status: 500 });

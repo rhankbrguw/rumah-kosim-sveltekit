@@ -1,26 +1,13 @@
 import { json } from '@sveltejs/kit';
-import mysql from 'mysql2/promise';
-import dotenv from 'dotenv';
-
-dotenv.config();
+import { query } from '$lib/db.js';
 
 export async function GET() {
 	try {
-		const connection = await mysql.createConnection({
-			host: process.env.DB_HOST,
-			user: process.env.DB_USER,
-			password: process.env.DB_PASSWORD,
-			database: process.env.DB_NAME
-		});
-
-		const [rows] = await connection.execute(
-			'SELECT id, title, price, image, description FROM products'
-		);
-		await connection.end();
-
-		return json(rows);
+		const sql = 'SELECT id, title, price, image, description FROM products';
+		const books = await query(sql);
+		return json(books);
 	} catch (error) {
-		console.error('Error fetching books:', error.message);
-		return json({ error: 'Server error' }, { status: 500 });
+		console.error('Error fetching books:', error);
+		return json({ error: 'Internal Server Error' }, { status: 500 });
 	}
 }

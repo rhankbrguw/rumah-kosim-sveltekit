@@ -1,8 +1,5 @@
 import { json } from '@sveltejs/kit';
-import mysql from 'mysql2/promise';
-import dotenv from 'dotenv';
-
-dotenv.config();
+import { query } from '$lib/db.js';
 
 export async function GET({ url }) {
 	const id = url.searchParams.get('id');
@@ -12,18 +9,8 @@ export async function GET({ url }) {
 	}
 
 	try {
-		const connection = await mysql.createConnection({
-			host: process.env.DB_HOST,
-			user: process.env.DB_USER,
-			password: process.env.DB_PASSWORD,
-			database: process.env.DB_NAME
-		});
-
-		const [rows] = await connection.execute(
-			'SELECT id, title, price, image, description, quantity FROM products WHERE id = ?',
-			[id]
-		);
-		await connection.end();
+		const sql = 'SELECT id, title, price, image, description, quantity FROM products WHERE id = ?';
+		const rows = await query(sql, [id]);
 
 		if (rows.length > 0) {
 			return json(rows[0]);
