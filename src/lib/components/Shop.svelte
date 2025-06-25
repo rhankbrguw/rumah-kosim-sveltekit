@@ -63,7 +63,7 @@
 
 			<!-- Banner Image -->
 			<img
-				src="/src/lib/assets/image/banner-5.png"
+				src="/images/banner-5.png"
 				alt="Free Shipping Promo"
 				class="w-full object-cover transition-transform duration-500 hover:scale-105"
 			/>
